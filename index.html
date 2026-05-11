@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FootyLive Premium + Stats</title>
+    <title>FootyLive Premium + Fixed Ads</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -13,20 +13,54 @@
             --bg-main: #050505;
             --surface: #121212;
             --accent: #00ff88;
-            --text-secondary: #94a3b8;
         }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg-main);
             color: #ffffff;
-            transition: background 0.4s ease;
+            margin: 0;
+            padding-top: 60px; /* Space for fixed top ad */
         }
 
+        /* --- Fixed Ad Zones --- */
+        #ad-top-fixed {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: #000;
+            z-index: 1000;
+            border-bottom: 1px solid #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #ad-left-fixed {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            bottom: 60px;
+            width: 160px;
+            background: #000;
+            z-index: 900;
+            border-right: 1px solid #333;
+            display: none; /* Hidden on mobile */
+            justify-content: center;
+            padding-top: 20px;
+        }
+
+        @media (min-width: 1200px) {
+            #ad-left-fixed { display: flex; }
+            main { margin-left: 160px; }
+        }
+
+        /* --- UI Components --- */
         .match-card {
             background: var(--surface);
             border: 1px solid #222;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
             border-radius: 12px;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -37,235 +71,144 @@
             background: rgba(0, 255, 136, 0.05);
         }
 
-        .match-card:hover {
-            border-color: var(--accent);
-            background: #181818;
-        }
-
-        .live-indicator {
-            background: rgba(239, 68, 68, 0.1);
-            color: #ef4444;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 10px;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .live-dot-premium {
-            width: 6px;
-            height: 6px;
-            background-color: #ef4444;
-            border-radius: 50%;
-            animation: pulse-red 1.5s infinite;
-        }
-
-        @keyframes pulse-red { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
-
-        .league-divider {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin: 32px 0 16px 0;
-        }
-
-        .league-divider hr { flex: 1; border: 0; border-top: 1px solid #222; }
+        .match-card:hover { border-color: var(--accent); }
 
         .premium-score {
-            font-family: 'Plus Jakarta Sans', sans-serif;
             font-weight: 800;
             font-size: 1.5rem;
-            letter-spacing: -1px;
             background: #1a1a1a;
             padding: 4px 12px;
             border-radius: 8px;
             color: var(--accent);
         }
 
-        #modal-favorite, #modal-stats {
-            backdrop-filter: blur(15px);
-            background: rgba(0,0,0,0.9);
-        }
-
-        .stat-bar-container {
-            height: 6px;
-            background: #222;
-            border-radius: 3px;
-            overflow: hidden;
-            margin-top: 4px;
-        }
-
-        #ad-container-fixed {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            height: 60px; background: #000;
-            display: flex; align-items: center; justify-content: center;
-            z-index: 1000; border-top: 1px solid #333;
-            overflow: hidden;
+        #ad-bottom-fixed {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: #000;
+            z-index: 1000;
+            border-top: 1px solid #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .fav-star { color: #ffd700; }
+        
+        /* Modal Glassmorphism */
+        #modal-favorite, #modal-stats {
+            backdrop-filter: blur(15px);
+            background: rgba(0,0,0,0.8);
+        }
     </style>
 </head>
-<body class="min-h-screen pb-24">
+<body class="pb-20">
 
-    <!-- Adsterra Initializer -->
-    <script type="text/javascript">
-        // Adsterra Configuration Hidden
-        atOptions = {
-            'key' : '5778916',
-            'format' : 'iframe',
-            'height' : 60,
-            'width' : 468,
-            'params' : {}
-        };
-    </script>
+    <!-- Fixed Top Ad Strip -->
+    <div id="ad-top-fixed">
+        <script type="text/javascript">
+            atOptions = { 'key' : '5778916', 'format' : 'iframe', 'height' : 60, 'width' : 468, 'params' : {} };
+        </script>
+        <script type="text/javascript" src="//www.highperformanceformat.com/5778916/invoke.js"></script>
+    </div>
 
-    <!-- Modal Choix de l'équipe favorite -->
-    <div id="modal-favorite" class="fixed inset-0 z-[200] hidden flex items-center justify-center p-4">
-        <div class="bg-zinc-950 border border-white/10 w-full max-w-md rounded-3xl p-8 shadow-2xl text-center">
-            <div class="w-16 h-16 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <i class="fas fa-heart text-emerald-500 text-2xl"></i>
-            </div>
-            <h2 class="text-2xl font-black mb-2">Équipe Favorite</h2>
-            <p class="text-slate-400 text-sm mb-6">Suivez votre équipe en priorité.</p>
-            
-            <input type="text" id="fav-input" placeholder="Ex: Real Madrid, PSG..." 
-                class="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-emerald-500 mb-4 transition-all">
-            
-            <button id="save-fav-btn" class="w-full bg-emerald-500 text-black font-bold py-3 rounded-xl hover:bg-emerald-400 transition-colors">
-                COMMENCER
-            </button>
-        </div>
+    <!-- Fixed Left Ad Skyscraper (Desktop only) -->
+    <div id="ad-left-fixed">
+        <script type="text/javascript">
+            atOptions = { 'key' : '5778916', 'format' : 'iframe', 'height' : 600, 'width' : 160, 'params' : {} };
+        </script>
+        <script type="text/javascript" src="//www.highperformanceformat.com/5778916/invoke.js"></script>
     </div>
 
     <!-- Navigation -->
-    <nav class="sticky top-4 z-50 mx-auto max-w-4xl px-4">
+    <nav class="sticky top-4 z-[800] mx-auto max-w-4xl px-4 mt-4">
         <div class="bg-black/80 backdrop-blur-md border border-white/10 rounded-2xl px-6 py-3 flex justify-between items-center shadow-2xl">
             <div class="flex items-center gap-3">
                 <div class="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-futbol text-black text-lg"></i>
+                    <i class="fas fa-futbol text-black"></i>
                 </div>
                 <span class="font-extrabold text-lg tracking-tighter">FOOTY<span class="text-emerald-500">LIVE</span></span>
             </div>
             <div class="flex items-center gap-4 text-xs font-bold uppercase">
                 <span id="fav-display" class="text-emerald-500 hidden sm:inline-block"></span>
-                <select id="selecteur-langue" class="bg-transparent outline-none cursor-pointer hover:text-emerald-400">
-                    <option value="fr" selected>FR</option>
-                    <option value="en">EN</option>
-                </select>
                 <button id="btn-actualiser" class="text-white hover:text-emerald-400">
-                    <i class="fas fa-redo-alt text-sm" id="icone-actualiser"></i>
+                    <i class="fas fa-redo-alt" id="icone-actualiser"></i>
                 </button>
             </div>
         </div>
     </nav>
 
-    <!-- Contenu Principal -->
+    <!-- Main Content -->
     <main class="max-w-4xl mx-auto px-4 mt-8">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4">
             <div>
-                <h2 id="titre-page" class="text-3xl font-extrabold mb-1">Matchs du jour</h2>
-                <p class="text-slate-500 text-sm" id="txt-soustitre">Statistiques en temps réel</p>
+                <h2 id="titre-page" class="text-3xl font-extrabold">Matchs du jour</h2>
+                <p class="text-slate-500 text-sm">Sélectionnez votre équipe favorite</p>
             </div>
-            <div class="flex bg-zinc-900 p-1 rounded-xl border border-white/5 w-full sm:w-auto">
-                <button id="filtre-tous" class="flex-1 sm:flex-none px-6 py-2 rounded-lg text-xs font-bold transition-all bg-emerald-500 text-black">TOUS</button>
-                <button id="filtre-direct" class="flex-1 sm:flex-none px-6 py-2 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white">DIRECT</button>
+            <div class="flex bg-zinc-900 p-1 rounded-xl border border-white/5">
+                <button id="filtre-tous" class="px-6 py-2 rounded-lg text-xs font-bold bg-emerald-500 text-black">TOUS</button>
+                <button id="filtre-direct" class="px-6 py-2 rounded-lg text-xs font-bold text-slate-400">DIRECT</button>
             </div>
-        </div>
-
-        <!-- Ad Spot Top -->
-        <div class="mb-6 flex justify-center overflow-hidden rounded-xl border border-white/5 bg-zinc-900/30 py-2">
-            <script type="text/javascript" src="//www.highperformanceformat.com/5778916/invoke.js"></script>
         </div>
 
         <div id="conteneur-matchs" class="space-y-4">
-            <div class="h-24 bg-zinc-900 animate-pulse rounded-xl"></div>
+            <!-- Matches populated by JS -->
         </div>
     </main>
 
-    <!-- Modal des Statistiques -->
-    <div id="modal-stats" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4">
-        <div class="bg-zinc-950 border border-white/10 w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl">
-            <div class="p-6 border-b border-white/5 flex justify-between items-center">
-                <h3 class="font-bold text-emerald-400" id="stat-league-name">Stats du Match</h3>
-                <button onclick="fermerStats()" class="text-slate-500 hover:text-white text-xl">&times;</button>
-            </div>
-            <div id="stats-content" class="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
-                <p class="text-center text-slate-500 italic">Chargement...</p>
-            </div>
-            <!-- Ad Spot in Modal -->
-            <div class="p-4 bg-black/50 border-t border-white/5 flex justify-center">
-                <div id="modal-ad-placeholder">
-                    <script type="text/javascript" src="//www.highperformanceformat.com/5778916/invoke.js"></script>
-                </div>
-            </div>
+    <!-- Fixed Bottom Ad Strip -->
+    <div id="ad-bottom-fixed">
+        <script type="text/javascript" src="//www.highperformanceformat.com/5778916/invoke.js"></script>
+    </div>
+
+    <!-- Favorite Selection Modal -->
+    <div id="modal-favorite" class="fixed inset-0 z-[2000] hidden flex items-center justify-center p-4">
+        <div class="bg-zinc-950 border border-white/10 w-full max-w-md rounded-3xl p-8 shadow-2xl text-center">
+            <h2 class="text-2xl font-black mb-4">Équipe Favorite</h2>
+            <input type="text" id="fav-input" placeholder="Real Madrid, Al Hilal..." 
+                class="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-emerald-500 mb-4">
+            <button id="save-fav-btn" class="w-full bg-emerald-500 text-black font-bold py-3 rounded-xl">SAUVEGARDER</button>
         </div>
     </div>
 
-    <!-- Sticky Adsterra Banner -->
-    <div id="ad-container-fixed">
-        <script type="text/javascript" src="//www.highperformanceformat.com/5778916/invoke.js"></script>
+    <!-- Stats Modal -->
+    <div id="modal-stats" class="fixed inset-0 z-[1500] hidden flex items-center justify-center p-4">
+        <div class="bg-zinc-950 border border-white/10 w-full max-w-lg rounded-3xl overflow-hidden">
+            <div class="p-6 border-b border-white/5 flex justify-between items-center">
+                <h3 class="font-bold text-emerald-400">Statistiques</h3>
+                <button onclick="fermerStats()" class="text-slate-500 text-2xl">&times;</button>
+            </div>
+            <div id="stats-content" class="p-6 space-y-4"></div>
+        </div>
     </div>
 
     <script>
         const CONFIG = {
             CLE: 'bebbbc3ed33a067e20d7d61466556062',
             BASE_URL: 'https://v3.football.api-sports.io',
-            LIGUES_PRIORITAIRES: [2, 3, 15, 39, 140, 78, 135, 61, 141, 4, 30, 13, 10, 11, 45, 848]
+            LIGUES: [2, 3, 15, 39, 140, 78, 135, 61]
         };
 
-        const TRADUCTIONS = {
-            fr: { titre: "Matchs du jour", soustitre: "Cliquez pour les statistiques", tous: "TOUS", direct: "DIRECT", liguePremium: "LIGUE MAJEURE", statsTitre: "Stats du Match", indisponible: "Stats non disponibles.", favorite: "ÉQUIPE: ", dir: "ltr" },
-            en: { titre: "Matchday", soustitre: "Click for match stats", tous: "ALL", direct: "LIVE", liguePremium: "MAJOR LEAGUE", statsTitre: "Match Stats", indisponible: "Stats unavailable.", favorite: "FAV: ", dir: "ltr" }
-        };
-
-        let langueActive = 'fr';
-        let filtreActif = 'all';
         let donneesMatchs = [];
         let equipeFavorite = localStorage.getItem('favTeam') || "";
 
-        // Function to trigger invisible ad actions
-        function triggerAds() {
-            // Logic to track ad engagement or trigger hidden popunders if needed
-            console.log("System Sync...");
-        }
-
         function verifierFavori() {
-            if (!equipeFavorite) {
-                document.getElementById('modal-favorite').classList.remove('hidden');
-            } else {
-                document.getElementById('fav-display').innerText = TRADUCTIONS[langueActive].favorite + equipeFavorite.toUpperCase();
-                document.getElementById('fav-display').classList.remove('hidden');
-            }
+            if (!equipeFavorite) document.getElementById('modal-favorite').classList.remove('hidden');
+            else document.getElementById('fav-display').innerText = "FAV: " + equipeFavorite.toUpperCase();
         }
 
         document.getElementById('save-fav-btn').addEventListener('click', () => {
-            const input = document.getElementById('fav-input').value.trim();
-            if (input) {
-                equipeFavorite = input;
-                localStorage.setItem('favTeam', input);
+            const val = document.getElementById('fav-input').value.trim();
+            if (val) {
+                equipeFavorite = val;
+                localStorage.setItem('favTeam', val);
                 document.getElementById('modal-favorite').classList.add('hidden');
-                document.getElementById('fav-display').innerText = TRADUCTIONS[langueActive].favorite + equipeFavorite.toUpperCase();
-                document.getElementById('fav-display').classList.remove('hidden');
-                triggerAds();
-                genererInterface();
+                location.reload();
             }
         });
-
-        function appliquerLangue(lang) {
-            langueActive = lang;
-            const t = TRADUCTIONS[lang];
-            document.documentElement.lang = lang;
-            document.getElementById('titre-page').innerText = t.titre;
-            document.getElementById('txt-soustitre').innerText = t.soustitre;
-            document.getElementById('filtre-tous').innerText = t.tous;
-            document.getElementById('filtre-direct').innerText = t.direct;
-            document.getElementById('stat-league-name').innerText = t.statsTitre;
-            if(equipeFavorite) document.getElementById('fav-display').innerText = t.favorite + equipeFavorite.toUpperCase();
-            genererInterface();
-        }
 
         async function chargerMatchs() {
             const icone = document.getElementById('icone-actualiser');
@@ -277,17 +220,12 @@
                 });
                 const data = await res.json();
                 donneesMatchs = data.response;
-
-                donneesMatchs.sort((a, b) => {
-                    const favA = isFav(a) ? 1 : 0;
-                    const favB = isFav(b) ? 1 : 0;
-                    if (favA !== favB) return favB - favA;
-                    const indexA = CONFIG.LIGUES_PRIORITAIRES.indexOf(a.league.id);
-                    const indexB = CONFIG.LIGUES_PRIORITAIRES.indexOf(b.league.id);
-                    if (indexA !== -1 && indexB === -1) return -1;
-                    if (indexA === -1 && indexB !== -1) return 1;
-                    if (indexA !== -1 && indexB !== -1) return indexA - indexB;
-                    return a.league.name.localeCompare(b.league.name);
+                
+                // Sort by Favorite
+                donneesMatchs.sort((a,b) => {
+                    const isAFav = a.teams.home.name.toLowerCase().includes(equipeFavorite.toLowerCase()) || a.teams.away.name.toLowerCase().includes(equipeFavorite.toLowerCase());
+                    const isBFav = b.teams.home.name.toLowerCase().includes(equipeFavorite.toLowerCase()) || b.teams.away.name.toLowerCase().includes(equipeFavorite.toLowerCase());
+                    return isBFav - isAFav;
                 });
 
                 genererInterface();
@@ -295,141 +233,33 @@
             icone.classList.remove('fa-spin');
         }
 
-        function isFav(m) {
-            if (!equipeFavorite) return false;
-            const fav = equipeFavorite.toLowerCase();
-            return m.teams.home.name.toLowerCase().includes(fav) || m.teams.away.name.toLowerCase().includes(fav);
-        }
-
-        async function voirStats(fixtureId) {
-            triggerAds();
-            const modal = document.getElementById('modal-stats');
-            const content = document.getElementById('stats-content');
-            modal.classList.remove('hidden');
-            content.innerHTML = `<div class="flex justify-center py-10"><i class="fas fa-circle-notch fa-spin text-emerald-500 text-2xl"></i></div>`;
-
-            try {
-                const res = await fetch(`${CONFIG.BASE_URL}/fixtures/statistics?fixture=${fixtureId}`, {
-                    headers: { 'x-rapidapi-key': CONFIG.CLE, 'x-rapidapi-host': 'v3.football.api-sports.io' }
-                });
-                const data = await res.json();
-                if (!data.response || data.response.length === 0) {
-                    content.innerHTML = `<p class="text-center text-slate-500">${TRADUCTIONS[langueActive].indisponible}</p>`;
-                    return;
-                }
-                renderStatsUI(data.response);
-            } catch (e) {
-                content.innerHTML = `<p class="text-center text-red-500">Error.</p>`;
-            }
-        }
-
-        function renderStatsUI(statsData) {
-            const content = document.getElementById('stats-content');
-            content.innerHTML = '';
-            const statsInteret = ["Ball Possession", "Shots on Goal", "Passes %", "Total Shots", "Fouls", "Corner Kicks"];
-            const team1 = statsData[0];
-            const team2 = statsData[1];
-
-            statsInteret.forEach(statName => {
-                const val1 = team1.statistics.find(s => s.type === statName)?.value || 0;
-                const val2 = team2.statistics.find(s => s.type === statName)?.value || 0;
-                const num1 = parseInt(val1) || 0;
-                const num2 = parseInt(val2) || 0;
-                const total = num1 + num2 || 1;
-                const perc1 = (num1 / total) * 100;
-
-                const row = document.createElement('div');
-                row.innerHTML = `
-                    <div class="flex justify-between text-[10px] font-bold uppercase mb-1">
-                        <span>${val1}</span>
-                        <span class="text-slate-500">${statName}</span>
-                        <span>${val2}</span>
-                    </div>
-                    <div class="stat-bar-container flex">
-                        <div class="h-full bg-emerald-500" style="width: ${perc1}%"></div>
-                        <div class="h-full bg-zinc-700" style="width: ${100 - perc1}%"></div>
-                    </div>
-                `;
-                content.appendChild(row);
-            });
-        }
-
-        function fermerStats() { document.getElementById('modal-stats').classList.add('hidden'); }
-
         function genererInterface() {
             const conteneur = document.getElementById('conteneur-matchs');
-            const t = TRADUCTIONS[langueActive];
             conteneur.innerHTML = '';
-
-            let filtres = donneesMatchs;
-            if (filtreActif === 'live') {
-                filtres = donneesMatchs.filter(m => ['1H', '2H', 'HT', 'ET', 'P'].includes(m.fixture.status.short));
-            }
-
-            let lastLigue = null;
-            filtres.forEach(m => {
-                if (m.league.id !== lastLigue) {
-                    const isMaj = CONFIG.LIGUES_PRIORITAIRES.includes(m.league.id);
-                    const div = document.createElement('div');
-                    div.className = 'league-divider';
-                    div.innerHTML = `<img src="${m.league.logo}" class="w-4 h-4 object-contain opacity-50"> <span class="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">${m.league.name}</span> ${isMaj ? `<span class="text-[8px] text-emerald-400 border border-emerald-400/20 px-1 rounded mx-2">${t.liguePremium}</span>` : ''} <hr class="flex-1 border-zinc-800">`;
-                    conteneur.appendChild(div);
-                    lastLigue = m.league.id;
-                }
-
-                const isLive = ['1H', '2H', 'HT', 'ET', 'P'].includes(m.fixture.status.short);
-                const favoriteMatch = isFav(m);
+            
+            donneesMatchs.forEach(m => {
+                const isFav = equipeFavorite && (m.teams.home.name.toLowerCase().includes(equipeFavorite.toLowerCase()) || m.teams.away.name.toLowerCase().includes(equipeFavorite.toLowerCase()));
                 const card = document.createElement('div');
-                card.className = `match-card p-4 flex items-center justify-between gap-4 ${favoriteMatch ? 'favorite' : ''}`;
-                card.onclick = () => voirStats(m.fixture.id);
-                
+                card.className = `match-card p-4 flex items-center justify-between gap-4 ${isFav ? 'favorite' : ''}`;
                 card.innerHTML = `
                     <div class="flex-1 flex items-center gap-2">
-                        <img src="${m.teams.home.logo}" class="w-6 h-6 object-contain">
-                        <span class="font-bold text-xs truncate">${m.teams.home.name}</span>
-                        ${favoriteMatch && m.teams.home.name.toLowerCase().includes(equipeFavorite.toLowerCase()) ? '<i class="fas fa-star fav-star text-[10px]"></i>' : ''}
+                        <img src="${m.teams.home.logo}" class="w-6 h-6">
+                        <span class="font-bold text-xs">${m.teams.home.name}</span>
                     </div>
-                    <div class="flex flex-col items-center">
-                        ${isLive ? `<div class="live-indicator"><span class="live-dot-premium"></span>${m.fixture.status.elapsed}'</div>` : `<span class="text-[9px] text-slate-500">${m.fixture.status.short}</span>`}
-                        <div class="premium-score my-1" dir="ltr">${m.goals.home ?? 0}:${m.goals.away ?? 0}</div>
-                    </div>
+                    <div class="premium-score" dir="ltr">${m.goals.home ?? 0}:${m.goals.away ?? 0}</div>
                     <div class="flex-1 flex items-center gap-2 justify-end">
-                        ${favoriteMatch && m.teams.away.name.toLowerCase().includes(equipeFavorite.toLowerCase()) ? '<i class="fas fa-star fav-star text-[10px]"></i>' : ''}
-                        <span class="font-bold text-xs truncate">${m.teams.away.name}</span>
-                        <img src="${m.teams.away.logo}" class="w-6 h-6 object-contain">
+                        <span class="font-bold text-xs text-right">${m.teams.away.name}</span>
+                        <img src="${m.teams.away.logo}" class="w-6 h-6">
                     </div>
                 `;
                 conteneur.appendChild(card);
             });
         }
 
-        document.getElementById('filtre-tous').addEventListener('click', function() {
-            filtreActif = 'all';
-            triggerAds();
-            this.className = "flex-1 sm:flex-none px-6 py-2 rounded-lg text-xs font-bold transition-all bg-emerald-500 text-black";
-            document.getElementById('filtre-direct').className = "flex-1 sm:flex-none px-6 py-2 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white";
-            genererInterface();
-        });
-
-        document.getElementById('filtre-direct').addEventListener('click', function() {
-            filtreActif = 'live';
-            triggerAds();
-            this.className = "flex-1 sm:flex-none px-6 py-2 rounded-lg text-xs font-bold transition-all bg-emerald-500 text-black";
-            document.getElementById('filtre-tous').className = "flex-1 sm:flex-none px-6 py-2 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white";
-            genererInterface();
-        });
-
-        document.getElementById('selecteur-langue').addEventListener('change', (e) => appliquerLangue(e.target.value));
-        document.getElementById('btn-actualiser').addEventListener('click', () => {
-            triggerAds();
-            chargerMatchs();
-        });
-
-        window.onclick = (e) => { if(e.target == document.getElementById('modal-stats')) fermerStats(); };
+        function fermerStats() { document.getElementById('modal-stats').classList.add('hidden'); }
 
         window.onload = () => {
             verifierFavori();
-            appliquerLangue('fr');
             chargerMatchs();
             setInterval(chargerMatchs, 60000);
         };
