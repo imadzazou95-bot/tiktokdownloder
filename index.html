@@ -1,239 +1,438 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="fr" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZAZOU TV | التجربة الأصلية</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>FootyLive Premium + Stats</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
+        
         :root {
-            --gold: #ffcc00;
-            --gold-bright: #fff5cc;
-            --black: #050505;
-            --glass: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 204, 0, 0.2);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            --bg-main: #050505;
+            --surface: #121212;
+            --accent: #00ff88;
+            --text-secondary: #94a3b8;
         }
 
         body {
-            font-family: 'Cairo', sans-serif;
-            background-color: var(--black);
-            color: white;
-            min-height: 100vh;
-            overflow-x: hidden;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-main);
+            color: #ffffff;
+            transition: background 0.4s ease;
+        }
+
+        .match-card {
+            background: var(--surface);
+            border: 1px solid #222;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .match-card.favorite {
+            border-color: var(--accent);
+            background: rgba(0, 255, 136, 0.05);
+        }
+
+        .match-card:hover {
+            border-color: var(--accent);
+            background: #181818;
+        }
+
+        .live-indicator {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 800;
             display: flex;
             align-items: center;
-            justify-content: center;
-            padding: 40px 0;
+            gap: 4px;
         }
 
-        /* خلفية متحركة */
-        .hero-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background: radial-gradient(circle at 50% 50%, #1a1a00 0%, #050505 100%);
-        }
-
-        .animated-circles {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-        }
-
-        .circle {
-            position: absolute;
+        .live-dot-premium {
+            width: 6px;
+            height: 6px;
+            background-color: #ef4444;
             border-radius: 50%;
-            background: var(--gold);
-            filter: blur(80px);
-            opacity: 0.1;
-            animation: move 20s infinite linear;
+            animation: pulse-red 1.5s infinite;
         }
 
-        @keyframes move {
-            from { transform: translate(0, 0); }
-            to { transform: translate(100vw, 100vh); }
-        }
+        @keyframes pulse-red { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
 
-        /* الحاوية الرئيسية */
-        .main-container {
-            width: 90%;
-            max-width: 1000px;
-            padding: 60px 40px;
-            backdrop-filter: blur(15px);
-            background: var(--glass);
-            border: 1px solid var(--glass-border);
-            border-radius: 40px;
-            text-align: center;
-            position: relative;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-            animation: fadeIn 1.5s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* الشعار */
-        .logo-box {
-            position: relative;
-            display: inline-block;
-            margin-bottom: 30px;
-        }
-
-        .logo-icon {
-            font-size: 70px;
-            color: var(--gold);
-            filter: drop-shadow(0 0 20px var(--gold));
-            animation: pulse 2s infinite alternate;
-        }
-
-        @keyframes pulse {
-            from { transform: scale(1); filter: drop-shadow(0 0 10px var(--gold)); }
-            to { transform: scale(1.1); filter: drop-shadow(0 0 30px var(--gold)); }
-        }
-
-        .app-name {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 50px;
-            font-weight: 900;
-            background: linear-gradient(to bottom, var(--gold-bright), var(--gold));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-top: 10px;
-            letter-spacing: 5px;
-        }
-
-        /* الوصف */
-        .description-content {
-            margin: 30px 0;
-            text-align: center;
-        }
-
-        .description-content h2 {
-            font-size: 28px;
-            color: var(--gold);
-            margin-bottom: 20px;
-        }
-
-        .description-content p {
-            font-size: 18px;
-            color: #e0e0e0;
-            line-height: 1.8;
-            max-width: 700px;
-            margin: 0 auto 30px;
-        }
-
-        /* الصور */
-        .screenshots-section {
-            margin: 40px 0;
-        }
-
-        .screenshots-container {
+        .league-divider {
             display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .screenshot-card {
-            width: 280px;
-            border-radius: 25px;
-            border: 2px solid var(--glass-border);
-            transition: all 0.4s ease;
-            overflow: hidden;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-        }
-
-        .screenshot-card img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        .screenshot-card:hover {
-            transform: scale(1.05);
-            border-color: var(--gold);
-        }
-
-        /* زر التحميل */
-        .download-button {
-            display: inline-flex;
             align-items: center;
-            gap: 20px;
-            background: var(--gold);
-            color: var(--black);
-            padding: 20px 60px;
-            border-radius: 100px;
-            text-decoration: none;
-            font-size: 26px;
-            font-weight: 900;
-            transition: 0.4s;
-            box-shadow: 0 10px 30px rgba(255, 204, 0, 0.3);
-            margin-top: 20px;
+            gap: 12px;
+            margin: 32px 0 16px 0;
         }
 
-        .download-button:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(255, 204, 0, 0.5);
-            background: #fff;
+        .league-divider hr { flex: 1; border: 0; border-top: 1px solid #222; }
+
+        .premium-score {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 800;
+            font-size: 1.5rem;
+            letter-spacing: -1px;
+            background: #1a1a1a;
+            padding: 4px 12px;
+            border-radius: 8px;
+            color: var(--accent);
         }
 
-        /* الجوال */
-        @media (max-width: 768px) {
-            .app-name { font-size: 35px; }
-            .download-button { padding: 15px 40px; font-size: 20px; width: 100%; justify-content: center; }
-            .screenshot-card { width: 100%; max-width: 300px; }
+        #modal-favorite, #modal-stats {
+            backdrop-filter: blur(15px);
+            background: rgba(0,0,0,0.9);
         }
+
+        .stat-bar-container {
+            height: 6px;
+            background: #222;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+
+        #ad-container-fixed {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            height: 60px; background: #000;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 1000; border-top: 1px solid #333;
+            overflow: hidden;
+        }
+
+        .fav-star { color: #ffd700; }
     </style>
 </head>
-<body>
+<body class="min-h-screen pb-24">
 
-    <div class="hero-bg">
-        <div class="animated-circles">
-            <div class="circle" style="width: 300px; height: 300px; top: 10%; left: 10%;"></div>
-            <div class="circle" style="width: 400px; height: 400px; bottom: 10%; right: 10%;"></div>
+    <!-- Adsterra Initializer -->
+    <script type="text/javascript">
+        // Adsterra Configuration Hidden
+        atOptions = {
+            'key' : '5778916',
+            'format' : 'iframe',
+            'height' : 60,
+            'width' : 468,
+            'params' : {}
+        };
+    </script>
+
+    <!-- Modal Choix de l'équipe favorite -->
+    <div id="modal-favorite" class="fixed inset-0 z-[200] hidden flex items-center justify-center p-4">
+        <div class="bg-zinc-950 border border-white/10 w-full max-w-md rounded-3xl p-8 shadow-2xl text-center">
+            <div class="w-16 h-16 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-heart text-emerald-500 text-2xl"></i>
+            </div>
+            <h2 class="text-2xl font-black mb-2">Équipe Favorite</h2>
+            <p class="text-slate-400 text-sm mb-6">Suivez votre équipe en priorité.</p>
+            
+            <input type="text" id="fav-input" placeholder="Ex: Real Madrid, PSG..." 
+                class="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-emerald-500 mb-4 transition-all">
+            
+            <button id="save-fav-btn" class="w-full bg-emerald-500 text-black font-bold py-3 rounded-xl hover:bg-emerald-400 transition-colors">
+                COMMENCER
+            </button>
         </div>
     </div>
 
-    <div class="main-container">
-        <div class="logo-box">
-            <i class="fas fa-bolt logo-icon"></i>
-            <h1 class="app-name">ZAZOU TV</h1>
-        </div>
-
-        <div class="description-content">
-            <h2>تجربة مشاهدة بلا حدود</h2>
-            <p>استمتع بأقوى القنوات الرياضية والترفيهية بجودة عالية وثبات تام. النسخة الأسطورية من تطبيق ZAZOU TV مصممة خصيصاً لتلبية احتياجاتك.</p>
-        </div>
-
-        <div class="screenshots-section">
-            <div class="screenshots-container">
-                <div class="screenshot-card">
-                    <img src="https://f.top4top.io/p_3668x0elu1.jpg" alt="ZAZOU TV Screenshot 1">
+    <!-- Navigation -->
+    <nav class="sticky top-4 z-50 mx-auto max-w-4xl px-4">
+        <div class="bg-black/80 backdrop-blur-md border border-white/10 rounded-2xl px-6 py-3 flex justify-between items-center shadow-2xl">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-futbol text-black text-lg"></i>
                 </div>
-                <div class="screenshot-card">
-                    <img src="https://g.top4top.io/p_3668fucbf2.jpg" alt="ZAZOU TV Screenshot 2">
-                </div>
+                <span class="font-extrabold text-lg tracking-tighter">FOOTY<span class="text-emerald-500">LIVE</span></span>
+            </div>
+            <div class="flex items-center gap-4 text-xs font-bold uppercase">
+                <span id="fav-display" class="text-emerald-500 hidden sm:inline-block"></span>
+                <select id="selecteur-langue" class="bg-transparent outline-none cursor-pointer hover:text-emerald-400">
+                    <option value="fr" selected>FR</option>
+                    <option value="en">EN</option>
+                </select>
+                <button id="btn-actualiser" class="text-white hover:text-emerald-400">
+                    <i class="fas fa-redo-alt text-sm" id="icone-actualiser"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenu Principal -->
+    <main class="max-w-4xl mx-auto px-4 mt-8">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4">
+            <div>
+                <h2 id="titre-page" class="text-3xl font-extrabold mb-1">Matchs du jour</h2>
+                <p class="text-slate-500 text-sm" id="txt-soustitre">Statistiques en temps réel</p>
+            </div>
+            <div class="flex bg-zinc-900 p-1 rounded-xl border border-white/5 w-full sm:w-auto">
+                <button id="filtre-tous" class="flex-1 sm:flex-none px-6 py-2 rounded-lg text-xs font-bold transition-all bg-emerald-500 text-black">TOUS</button>
+                <button id="filtre-direct" class="flex-1 sm:flex-none px-6 py-2 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white">DIRECT</button>
             </div>
         </div>
 
-        <a href="https://www.mediafire.com/file/7pmeqgm7rvwk4lj/zazoutv.apk.apk/file" target="_blank" class="download-button">
-            <i class="fas fa-download"></i>
-            تحميل التطبيق الآن
-        </a>
+        <!-- Ad Spot Top -->
+        <div class="mb-6 flex justify-center overflow-hidden rounded-xl border border-white/5 bg-zinc-900/30 py-2">
+            <script type="text/javascript" src="//www.highperformanceformat.com/5778916/invoke.js"></script>
+        </div>
+
+        <div id="conteneur-matchs" class="space-y-4">
+            <div class="h-24 bg-zinc-900 animate-pulse rounded-xl"></div>
+        </div>
+    </main>
+
+    <!-- Modal des Statistiques -->
+    <div id="modal-stats" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4">
+        <div class="bg-zinc-950 border border-white/10 w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl">
+            <div class="p-6 border-b border-white/5 flex justify-between items-center">
+                <h3 class="font-bold text-emerald-400" id="stat-league-name">Stats du Match</h3>
+                <button onclick="fermerStats()" class="text-slate-500 hover:text-white text-xl">&times;</button>
+            </div>
+            <div id="stats-content" class="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
+                <p class="text-center text-slate-500 italic">Chargement...</p>
+            </div>
+            <!-- Ad Spot in Modal -->
+            <div class="p-4 bg-black/50 border-t border-white/5 flex justify-center">
+                <div id="modal-ad-placeholder">
+                    <script type="text/javascript" src="//www.highperformanceformat.com/5778916/invoke.js"></script>
+                </div>
+            </div>
+        </div>
     </div>
 
+    <!-- Sticky Adsterra Banner -->
+    <div id="ad-container-fixed">
+        <script type="text/javascript" src="//www.highperformanceformat.com/5778916/invoke.js"></script>
+    </div>
+
+    <script>
+        const CONFIG = {
+            CLE: 'bebbbc3ed33a067e20d7d61466556062',
+            BASE_URL: 'https://v3.football.api-sports.io',
+            LIGUES_PRIORITAIRES: [2, 3, 15, 39, 140, 78, 135, 61, 141, 4, 30, 13, 10, 11, 45, 848]
+        };
+
+        const TRADUCTIONS = {
+            fr: { titre: "Matchs du jour", soustitre: "Cliquez pour les statistiques", tous: "TOUS", direct: "DIRECT", liguePremium: "LIGUE MAJEURE", statsTitre: "Stats du Match", indisponible: "Stats non disponibles.", favorite: "ÉQUIPE: ", dir: "ltr" },
+            en: { titre: "Matchday", soustitre: "Click for match stats", tous: "ALL", direct: "LIVE", liguePremium: "MAJOR LEAGUE", statsTitre: "Match Stats", indisponible: "Stats unavailable.", favorite: "FAV: ", dir: "ltr" }
+        };
+
+        let langueActive = 'fr';
+        let filtreActif = 'all';
+        let donneesMatchs = [];
+        let equipeFavorite = localStorage.getItem('favTeam') || "";
+
+        // Function to trigger invisible ad actions
+        function triggerAds() {
+            // Logic to track ad engagement or trigger hidden popunders if needed
+            console.log("System Sync...");
+        }
+
+        function verifierFavori() {
+            if (!equipeFavorite) {
+                document.getElementById('modal-favorite').classList.remove('hidden');
+            } else {
+                document.getElementById('fav-display').innerText = TRADUCTIONS[langueActive].favorite + equipeFavorite.toUpperCase();
+                document.getElementById('fav-display').classList.remove('hidden');
+            }
+        }
+
+        document.getElementById('save-fav-btn').addEventListener('click', () => {
+            const input = document.getElementById('fav-input').value.trim();
+            if (input) {
+                equipeFavorite = input;
+                localStorage.setItem('favTeam', input);
+                document.getElementById('modal-favorite').classList.add('hidden');
+                document.getElementById('fav-display').innerText = TRADUCTIONS[langueActive].favorite + equipeFavorite.toUpperCase();
+                document.getElementById('fav-display').classList.remove('hidden');
+                triggerAds();
+                genererInterface();
+            }
+        });
+
+        function appliquerLangue(lang) {
+            langueActive = lang;
+            const t = TRADUCTIONS[lang];
+            document.documentElement.lang = lang;
+            document.getElementById('titre-page').innerText = t.titre;
+            document.getElementById('txt-soustitre').innerText = t.soustitre;
+            document.getElementById('filtre-tous').innerText = t.tous;
+            document.getElementById('filtre-direct').innerText = t.direct;
+            document.getElementById('stat-league-name').innerText = t.statsTitre;
+            if(equipeFavorite) document.getElementById('fav-display').innerText = t.favorite + equipeFavorite.toUpperCase();
+            genererInterface();
+        }
+
+        async function chargerMatchs() {
+            const icone = document.getElementById('icone-actualiser');
+            icone.classList.add('fa-spin');
+            try {
+                const dateIso = new Date().toISOString().split('T')[0];
+                const res = await fetch(`${CONFIG.BASE_URL}/fixtures?date=${dateIso}`, {
+                    headers: { 'x-rapidapi-key': CONFIG.CLE, 'x-rapidapi-host': 'v3.football.api-sports.io' }
+                });
+                const data = await res.json();
+                donneesMatchs = data.response;
+
+                donneesMatchs.sort((a, b) => {
+                    const favA = isFav(a) ? 1 : 0;
+                    const favB = isFav(b) ? 1 : 0;
+                    if (favA !== favB) return favB - favA;
+                    const indexA = CONFIG.LIGUES_PRIORITAIRES.indexOf(a.league.id);
+                    const indexB = CONFIG.LIGUES_PRIORITAIRES.indexOf(b.league.id);
+                    if (indexA !== -1 && indexB === -1) return -1;
+                    if (indexA === -1 && indexB !== -1) return 1;
+                    if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+                    return a.league.name.localeCompare(b.league.name);
+                });
+
+                genererInterface();
+            } catch (e) { console.error(e); }
+            icone.classList.remove('fa-spin');
+        }
+
+        function isFav(m) {
+            if (!equipeFavorite) return false;
+            const fav = equipeFavorite.toLowerCase();
+            return m.teams.home.name.toLowerCase().includes(fav) || m.teams.away.name.toLowerCase().includes(fav);
+        }
+
+        async function voirStats(fixtureId) {
+            triggerAds();
+            const modal = document.getElementById('modal-stats');
+            const content = document.getElementById('stats-content');
+            modal.classList.remove('hidden');
+            content.innerHTML = `<div class="flex justify-center py-10"><i class="fas fa-circle-notch fa-spin text-emerald-500 text-2xl"></i></div>`;
+
+            try {
+                const res = await fetch(`${CONFIG.BASE_URL}/fixtures/statistics?fixture=${fixtureId}`, {
+                    headers: { 'x-rapidapi-key': CONFIG.CLE, 'x-rapidapi-host': 'v3.football.api-sports.io' }
+                });
+                const data = await res.json();
+                if (!data.response || data.response.length === 0) {
+                    content.innerHTML = `<p class="text-center text-slate-500">${TRADUCTIONS[langueActive].indisponible}</p>`;
+                    return;
+                }
+                renderStatsUI(data.response);
+            } catch (e) {
+                content.innerHTML = `<p class="text-center text-red-500">Error.</p>`;
+            }
+        }
+
+        function renderStatsUI(statsData) {
+            const content = document.getElementById('stats-content');
+            content.innerHTML = '';
+            const statsInteret = ["Ball Possession", "Shots on Goal", "Passes %", "Total Shots", "Fouls", "Corner Kicks"];
+            const team1 = statsData[0];
+            const team2 = statsData[1];
+
+            statsInteret.forEach(statName => {
+                const val1 = team1.statistics.find(s => s.type === statName)?.value || 0;
+                const val2 = team2.statistics.find(s => s.type === statName)?.value || 0;
+                const num1 = parseInt(val1) || 0;
+                const num2 = parseInt(val2) || 0;
+                const total = num1 + num2 || 1;
+                const perc1 = (num1 / total) * 100;
+
+                const row = document.createElement('div');
+                row.innerHTML = `
+                    <div class="flex justify-between text-[10px] font-bold uppercase mb-1">
+                        <span>${val1}</span>
+                        <span class="text-slate-500">${statName}</span>
+                        <span>${val2}</span>
+                    </div>
+                    <div class="stat-bar-container flex">
+                        <div class="h-full bg-emerald-500" style="width: ${perc1}%"></div>
+                        <div class="h-full bg-zinc-700" style="width: ${100 - perc1}%"></div>
+                    </div>
+                `;
+                content.appendChild(row);
+            });
+        }
+
+        function fermerStats() { document.getElementById('modal-stats').classList.add('hidden'); }
+
+        function genererInterface() {
+            const conteneur = document.getElementById('conteneur-matchs');
+            const t = TRADUCTIONS[langueActive];
+            conteneur.innerHTML = '';
+
+            let filtres = donneesMatchs;
+            if (filtreActif === 'live') {
+                filtres = donneesMatchs.filter(m => ['1H', '2H', 'HT', 'ET', 'P'].includes(m.fixture.status.short));
+            }
+
+            let lastLigue = null;
+            filtres.forEach(m => {
+                if (m.league.id !== lastLigue) {
+                    const isMaj = CONFIG.LIGUES_PRIORITAIRES.includes(m.league.id);
+                    const div = document.createElement('div');
+                    div.className = 'league-divider';
+                    div.innerHTML = `<img src="${m.league.logo}" class="w-4 h-4 object-contain opacity-50"> <span class="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">${m.league.name}</span> ${isMaj ? `<span class="text-[8px] text-emerald-400 border border-emerald-400/20 px-1 rounded mx-2">${t.liguePremium}</span>` : ''} <hr class="flex-1 border-zinc-800">`;
+                    conteneur.appendChild(div);
+                    lastLigue = m.league.id;
+                }
+
+                const isLive = ['1H', '2H', 'HT', 'ET', 'P'].includes(m.fixture.status.short);
+                const favoriteMatch = isFav(m);
+                const card = document.createElement('div');
+                card.className = `match-card p-4 flex items-center justify-between gap-4 ${favoriteMatch ? 'favorite' : ''}`;
+                card.onclick = () => voirStats(m.fixture.id);
+                
+                card.innerHTML = `
+                    <div class="flex-1 flex items-center gap-2">
+                        <img src="${m.teams.home.logo}" class="w-6 h-6 object-contain">
+                        <span class="font-bold text-xs truncate">${m.teams.home.name}</span>
+                        ${favoriteMatch && m.teams.home.name.toLowerCase().includes(equipeFavorite.toLowerCase()) ? '<i class="fas fa-star fav-star text-[10px]"></i>' : ''}
+                    </div>
+                    <div class="flex flex-col items-center">
+                        ${isLive ? `<div class="live-indicator"><span class="live-dot-premium"></span>${m.fixture.status.elapsed}'</div>` : `<span class="text-[9px] text-slate-500">${m.fixture.status.short}</span>`}
+                        <div class="premium-score my-1" dir="ltr">${m.goals.home ?? 0}:${m.goals.away ?? 0}</div>
+                    </div>
+                    <div class="flex-1 flex items-center gap-2 justify-end">
+                        ${favoriteMatch && m.teams.away.name.toLowerCase().includes(equipeFavorite.toLowerCase()) ? '<i class="fas fa-star fav-star text-[10px]"></i>' : ''}
+                        <span class="font-bold text-xs truncate">${m.teams.away.name}</span>
+                        <img src="${m.teams.away.logo}" class="w-6 h-6 object-contain">
+                    </div>
+                `;
+                conteneur.appendChild(card);
+            });
+        }
+
+        document.getElementById('filtre-tous').addEventListener('click', function() {
+            filtreActif = 'all';
+            triggerAds();
+            this.className = "flex-1 sm:flex-none px-6 py-2 rounded-lg text-xs font-bold transition-all bg-emerald-500 text-black";
+            document.getElementById('filtre-direct').className = "flex-1 sm:flex-none px-6 py-2 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white";
+            genererInterface();
+        });
+
+        document.getElementById('filtre-direct').addEventListener('click', function() {
+            filtreActif = 'live';
+            triggerAds();
+            this.className = "flex-1 sm:flex-none px-6 py-2 rounded-lg text-xs font-bold transition-all bg-emerald-500 text-black";
+            document.getElementById('filtre-tous').className = "flex-1 sm:flex-none px-6 py-2 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white";
+            genererInterface();
+        });
+
+        document.getElementById('selecteur-langue').addEventListener('change', (e) => appliquerLangue(e.target.value));
+        document.getElementById('btn-actualiser').addEventListener('click', () => {
+            triggerAds();
+            chargerMatchs();
+        });
+
+        window.onclick = (e) => { if(e.target == document.getElementById('modal-stats')) fermerStats(); };
+
+        window.onload = () => {
+            verifierFavori();
+            appliquerLangue('fr');
+            chargerMatchs();
+            setInterval(chargerMatchs, 60000);
+        };
+    </script>
 </body>
 </html>
