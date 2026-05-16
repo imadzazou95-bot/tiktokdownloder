@@ -1,268 +1,334 @@
 <!DOCTYPE html>
-<html lang="fr" dir="ltr">
+<html lang="ar" dir="rtl" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FootyLive Premium + Fixed Ads</title>
+    <title>TikTok Downloader Plus - تحميل تيك توك بدون علامة مائية</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts (Cairo) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                    },
+                    colors: {
+                        tiktok: {
+                            black: '#09090b', // Richer pitch black
+                            cyan: '#00f2fe',
+                            pink: '#fe0979',
+                            darkGray: '#18181b', // Tailwind zinc-900
+                            lightGray: '#27272a', // Tailwind zinc-800
+                            accent: '#1f1f23'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
-        
-        :root {
-            --bg-main: #050505;
-            --surface: #121212;
-            --accent: #00ff88;
-        }
-
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--bg-main);
-            color: #ffffff;
-            margin: 0;
-            padding-top: 60px; /* Space for fixed top ad */
+            font-family: 'Cairo', sans-serif;
+            background-color: #09090b;
+            background-image: radial-gradient(circle at 80% 10%, rgba(254, 9, 121, 0.08), transparent 500px),
+                              radial-gradient(circle at 20% 80%, rgba(0, 242, 254, 0.06), transparent 500px);
         }
-
-        /* --- Fixed Ad Zones --- */
-        #ad-top-fixed {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 60px;
-            background: #000;
-            z-index: 1000;
-            border-bottom: 1px solid #333;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        .glow-button {
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
-
-        #ad-left-fixed {
-            position: fixed;
-            top: 60px;
-            left: 0;
-            bottom: 60px;
-            width: 160px;
-            background: #000;
-            z-index: 900;
-            border-right: 1px solid #333;
-            display: none; /* Hidden on mobile */
-            justify-content: center;
-            padding-top: 20px;
+        .glow-button:hover {
+            box-shadow: 0 0 25px rgba(254, 9, 121, 0.35);
         }
-
-        @media (min-width: 1200px) {
-            #ad-left-fixed { display: flex; }
-            main { margin-left: 160px; }
-        }
-
-        /* --- UI Components --- */
-        .match-card {
-            background: var(--surface);
-            border: 1px solid #222;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .match-card.favorite {
-            border-color: var(--accent);
-            background: rgba(0, 255, 136, 0.05);
-        }
-
-        .match-card:hover { border-color: var(--accent); }
-
-        .premium-score {
-            font-weight: 800;
-            font-size: 1.5rem;
-            background: #1a1a1a;
-            padding: 4px 12px;
-            border-radius: 8px;
-            color: var(--accent);
-        }
-
-        #ad-bottom-fixed {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 60px;
-            background: #000;
-            z-index: 1000;
-            border-top: 1px solid #333;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .fav-star { color: #ffd700; }
-        
-        /* Modal Glassmorphism */
-        #modal-favorite, #modal-stats {
-            backdrop-filter: blur(15px);
-            background: rgba(0,0,0,0.8);
+        .glass-panel {
+            background: rgba(24, 24, 27, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
     </style>
 </head>
-<body class="pb-20">
+<body class="text-gray-100 min-h-screen flex flex-col justify-between overflow-x-hidden selection:bg-tiktok-pink selection:text-white">
 
-    <!-- Fixed Top Ad Strip -->
-    <div id="ad-top-fixed">
-        <script type="text/javascript">
-            atOptions = { 'key' : '5778916', 'format' : 'iframe', 'height' : 60, 'width' : 468, 'params' : {} };
-        </script>
-        <script type="text/javascript" src="//www.highperformanceformat.com/5778916/invoke.js"></script>
-    </div>
-
-    <!-- Fixed Left Ad Skyscraper (Desktop only) -->
-    <div id="ad-left-fixed">
-        <script type="text/javascript">
-            atOptions = { 'key' : '5778916', 'format' : 'iframe', 'height' : 600, 'width' : 160, 'params' : {} };
-        </script>
-        <script type="text/javascript" src="//www.highperformanceformat.com/5778916/invoke.js"></script>
-    </div>
-
-    <!-- Navigation -->
-    <nav class="sticky top-4 z-[800] mx-auto max-w-4xl px-4 mt-4">
-        <div class="bg-black/80 backdrop-blur-md border border-white/10 rounded-2xl px-6 py-3 flex justify-between items-center shadow-2xl">
-            <div class="flex items-center gap-3">
-                <div class="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-futbol text-black"></i>
+    <!-- Navigation Bar -->
+    <nav class="border-b border-white/5 bg-tiktok-black/80 backdrop-blur-xl sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo -->
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-tiktok-pink to-tiktok-cyan p-[1px] flex items-center justify-center">
+                        <div class="w-full h-full bg-tiktok-black rounded-[11px] flex items-center justify-center">
+                            <i class="fa-solid fa-cloud-arrow-down text-transparent bg-clip-text bg-gradient-to-tr from-tiktok-pink to-tiktok-cyan text-base"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <span class="font-black text-lg tracking-tight bg-gradient-to-r from-white via-tiktok-cyan to-tiktok-pink bg-clip-text text-transparent">TikTok Downloader Plus</span>
+                        <span class="block text-[9px] text-gray-500 font-bold tracking-widest uppercase leading-none mt-0.5">V1.0.0 APK</span>
+                    </div>
                 </div>
-                <span class="font-extrabold text-lg tracking-tighter">FOOTY<span class="text-emerald-500">LIVE</span></span>
-            </div>
-            <div class="flex items-center gap-4 text-xs font-bold uppercase">
-                <span id="fav-display" class="text-emerald-500 hidden sm:inline-block"></span>
-                <button id="btn-actualiser" class="text-white hover:text-emerald-400">
-                    <i class="fas fa-redo-alt" id="icone-actualiser"></i>
-                </button>
+                <!-- Navigation Links -->
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="#features" class="text-gray-400 hover:text-white transition-colors text-sm font-medium">الميزات</a>
+                    <a href="#how-to-use" class="text-gray-400 hover:text-white transition-colors text-sm font-medium">كيفية التثبيت</a>
+                </div>
+                <!-- Download Action -->
+                <div>
+                    <button onclick="openDownloadModal()" class="glow-button px-5 py-2.5 rounded-xl bg-gradient-to-r from-tiktok-pink to-tiktok-cyan text-black font-extrabold text-xs tracking-wide shadow-lg shadow-tiktok-pink/10 flex items-center gap-2">
+                        <i class="fa-solid fa-download"></i> تحميل APK مجاناً
+                    </button>
+                </div>
             </div>
         </div>
     </nav>
 
-    <!-- Main Content -->
-    <main class="max-w-4xl mx-auto px-4 mt-8">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4">
-            <div>
-                <h2 id="titre-page" class="text-3xl font-extrabold">Matchs du jour</h2>
-                <p class="text-slate-500 text-sm">Sélectionnez votre équipe favorite</p>
-            </div>
-            <div class="flex bg-zinc-900 p-1 rounded-xl border border-white/5">
-                <button id="filtre-tous" class="px-6 py-2 rounded-lg text-xs font-bold bg-emerald-500 text-black">TOUS</button>
-                <button id="filtre-direct" class="px-6 py-2 rounded-lg text-xs font-bold text-slate-400">DIRECT</button>
-            </div>
-        </div>
+    <!-- Hero Section -->
+    <main class="flex-grow">
+        <section class="max-w-6xl mx-auto px-6 py-20 md:py-32 text-center relative">
+            <div class="absolute top-10 left-1/2 -translate-x-1/2 w-80 h-80 bg-tiktok-pink/5 rounded-full filter blur-[120px] pointer-events-none"></div>
+            
+            <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-tiktok-lightGray/40 border border-white/5 text-[11px] font-semibold text-gray-400 mb-8 backdrop-blur-md">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> ملف فحص آمن 100% متوفر للتحميل المباشر
+            </span>
 
-        <div id="conteneur-matchs" class="space-y-4">
-            <!-- Matches populated by JS -->
-        </div>
+            <h1 class="text-4xl sm:text-6xl font-black mb-6 leading-tight max-w-3xl mx-auto tracking-tight">
+                حمّل فيديوهات تيك توك <br class="hidden sm:block">
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-tiktok-cyan to-tiktok-pink">بدون علامة مائية</span> تماماً وبسرعة فائقة
+            </h1>
+            
+            <p class="text-gray-400 text-sm sm:text-base max-w-xl mx-auto mb-12 font-medium leading-relaxed">
+                تطبيق أندرويد متكامل يتيح لك حفظ الفيديوهات والمقاطع الصوتية بجودتها الأصلية بدون علامات مائية وبنقرة زر واحدة.
+            </p>
+
+            <!-- Hero CTA Card -->
+            <div class="max-w-md mx-auto glass-panel p-8 rounded-2xl relative z-10 shadow-2xl shadow-black/80 mb-24">
+                <div class="flex items-center justify-between mb-8">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-zinc-800 flex items-center justify-center text-emerald-400 text-2xl">
+                            <i class="fa-brands fa-android"></i>
+                        </div>
+                        <div class="text-right">
+                            <h3 class="font-bold text-base text-gray-200">TikTok Downloader Plus</h3>
+                            <p class="text-[11px] text-gray-500 mt-0.5">ملف تثبيت أندرويد (APK) نظيف كلياً</p>
+                        </div>
+                    </div>
+                    <span class="bg-zinc-800 text-tiktok-cyan text-[10px] font-extrabold px-2.5 py-1 rounded-md border border-white/5">V1.0.0</span>
+                </div>
+                
+                <button onclick="openDownloadModal()" class="glow-button w-full py-4 rounded-xl bg-gradient-to-r from-tiktok-pink via-purple-600 to-tiktok-cyan text-white font-extrabold text-sm transition-transform duration-300 hover:scale-[1.01] active:scale-[0.99] shadow-xl shadow-tiktok-pink/15 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-circle-down text-lg"></i>
+                    ابدأ التحميل المباشر
+                </button>
+            </div>
+
+            <!-- Features Section -->
+            <div id="features" class="pt-16 border-t border-white/5">
+                <div class="text-center mb-16">
+                    <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">قوة الأداء والبساطة في تطبيق واحد</h2>
+                    <p class="text-gray-500 text-xs sm:text-sm mt-3 max-w-md mx-auto font-medium">لقد تم تصميم التطبيق خصيصاً ليمنحك أفضل تجربة تحميل ممكنة.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-right">
+                    <!-- Feature Card 1 -->
+                    <div class="glass-panel p-8 rounded-2xl hover:border-tiktok-pink/20 transition-all duration-300 group">
+                        <div class="w-12 h-12 rounded-xl bg-tiktok-pink/10 flex items-center justify-center text-tiktok-pink text-xl mb-6 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        </div>
+                        <h4 class="font-bold text-lg text-gray-200 mb-2">إزالة العلامة المائية ذكياً</h4>
+                        <p class="text-gray-500 text-xs sm:text-sm leading-relaxed">بفضل خوارزميات المعالجة الذكية، يقوم التطبيق بنسخ الفيديو نظيفاً وخالياً تماماً من أي شعارات مائية غير مرغوبة.</p>
+                    </div>
+                    
+                    <!-- Feature Card 2 -->
+                    <div class="glass-panel p-8 rounded-2xl hover:border-tiktok-cyan/20 transition-all duration-300 group">
+                        <div class="w-12 h-12 rounded-xl bg-tiktok-cyan/10 flex items-center justify-center text-tiktok-cyan text-xl mb-6 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-bolt-lightning"></i>
+                        </div>
+                        <h4 class="font-bold text-lg text-gray-200 mb-2">تحميل بـسرعة فائقة</h4>
+                        <p class="text-gray-500 text-xs sm:text-sm leading-relaxed">اتصالات متعددة الخيوط تضمن لك سحب الفيديو بأقصى سرعة يسمح بها اتصال الإنترنت الخاص بك ودون أي تأخير.</p>
+                    </div>
+                    
+                    <!-- Feature Card 3 -->
+                    <div class="glass-panel p-8 rounded-2xl hover:border-emerald-500/20 transition-all duration-300 group">
+                        <div class="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 text-xl mb-6 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-shield-virus"></i>
+                        </div>
+                        <h4 class="font-bold text-lg text-gray-200 mb-2">تأمين مـوثق وآمـن</h4>
+                        <p class="text-gray-500 text-xs sm:text-sm leading-relaxed">ملف APK مجتاز لجميع بروتوكولات الأمان وفحوصات الفيروسات المعتمدة، نضمن لك سلامة جهازك وبياناتك بالكامل.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Installation Guide Section -->
+            <div id="how-to-use" class="pt-24 pb-12">
+                <div class="text-center mb-16">
+                    <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">كيفية تثبيت التطبيق وتفعيله؟</h2>
+                    <p class="text-gray-500 text-xs sm:text-sm mt-3 max-w-md mx-auto">خطوات سريعة للبدء في استخدام التطبيق على هاتفك الأندرويد.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-right max-w-5xl mx-auto">
+                    <div class="flex gap-4">
+                        <div class="text-3xl font-black text-zinc-800">01</div>
+                        <div>
+                            <h4 class="font-bold text-base text-gray-200 mb-1">تنزيل ملف الـ APK</h4>
+                            <p class="text-gray-500 text-xs leading-relaxed">اضغط على زر التحميل في الأعلى وانتظر اكتمال إعداد الملف ليتم نقلك لـ MediaFire لبدء التنزيل.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="text-3xl font-black text-zinc-800">02</div>
+                        <div>
+                            <h4 class="font-bold text-base text-gray-200 mb-1">السماح بالمصادر غير المعروفة</h4>
+                            <p class="text-gray-500 text-xs leading-relaxed">إذا طُلب منك، قم بتفعيل خيار "تثبيت التطبيقات من مصادر غير معروفة" في إعدادات الأمان بهاتفك.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="text-3xl font-black text-zinc-800">03</div>
+                        <div>
+                            <h4 class="font-bold text-base text-gray-200 mb-1">ابدأ التحميل والمشاركة</h4>
+                            <p class="text-gray-500 text-xs leading-relaxed">افتح التطبيق، انسخ رابط أي فيديو من تيك توك، الصقه بالتطبيق وحمل فوراً بدون علامة مائية.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
     </main>
 
-    <!-- Fixed Bottom Ad Strip -->
-    <div id="ad-bottom-fixed">
-        <script type="text/javascript" src="//www.highperformanceformat.com/5778916/invoke.js"></script>
-    </div>
+    <!-- High-Fidelity Download & Verification Modal -->
+    <div id="downloadModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/95 backdrop-blur-md hidden transition-opacity duration-300 opacity-0">
+        <div class="glass-panel w-full max-w-md p-8 rounded-2xl text-center relative border border-white/10 shadow-2xl">
+            
+            <!-- Close Button -->
+            <button onclick="closeDownloadModal()" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-zinc-900 text-gray-500 hover:text-white flex items-center justify-center transition-colors border border-white/5">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
 
-    <!-- Favorite Selection Modal -->
-    <div id="modal-favorite" class="fixed inset-0 z-[2000] hidden flex items-center justify-center p-4">
-        <div class="bg-zinc-950 border border-white/10 w-full max-w-md rounded-3xl p-8 shadow-2xl text-center">
-            <h2 class="text-2xl font-black mb-4">Équipe Favorite</h2>
-            <input type="text" id="fav-input" placeholder="Real Madrid, Al Hilal..." 
-                class="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-emerald-500 mb-4">
-            <button id="save-fav-btn" class="w-full bg-emerald-500 text-black font-bold py-3 rounded-xl">SAUVEGARDER</button>
-        </div>
-    </div>
+            <!-- Step 1: Secure Link Preparation & Verification -->
+            <div id="modalStepCountdown" class="py-4">
+                <div class="w-12 h-12 mx-auto rounded-xl bg-gradient-to-tr from-tiktok-pink to-tiktok-cyan p-[1px] flex items-center justify-center mb-6">
+                    <div class="w-full h-full bg-zinc-950 rounded-[11px] flex items-center justify-center">
+                        <i class="fa-solid fa-shield-halved text-transparent bg-clip-text bg-gradient-to-tr from-tiktok-pink to-tiktok-cyan text-lg animate-pulse"></i>
+                    </div>
+                </div>
+                
+                <h3 class="font-black text-xl mb-1 text-gray-200">تحضير رابط التحميل الآمن...</h3>
+                <p class="text-gray-500 text-xs mb-8">يتم الآن فحص وتجهيز خادم التنزيل المباشر الخاص بك.</p>
+                
+                <!-- System Status Board (Adds Premium Aesthetic) -->
+                <div class="bg-zinc-950/50 border border-white/5 rounded-xl p-4 mb-8 text-right text-xs space-y-2 font-mono text-zinc-400">
+                    <div class="flex justify-between items-center">
+                        <span>الخادم الرئيسي:</span>
+                        <span class="text-emerald-500">مُتصل (آمن)</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span>حجم الملف:</span>
+                        <span>12.4 MB</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span>فحص الحماية:</span>
+                        <span class="text-tiktok-cyan">مؤمن بالكامل</span>
+                    </div>
+                </div>
 
-    <!-- Stats Modal -->
-    <div id="modal-stats" class="fixed inset-0 z-[1500] hidden flex items-center justify-center p-4">
-        <div class="bg-zinc-950 border border-white/10 w-full max-w-lg rounded-3xl overflow-hidden">
-            <div class="p-6 border-b border-white/5 flex justify-between items-center">
-                <h3 class="font-bold text-emerald-400">Statistiques</h3>
-                <button onclick="fermerStats()" class="text-slate-500 text-2xl">&times;</button>
+                <!-- Circular Progress & Timer -->
+                <div class="mb-2">
+                    <div class="flex justify-between items-center text-xs text-gray-400 mb-2">
+                        <span>جاري التحقق من الهوية...</span>
+                        <span id="countdownTimer" class="font-bold text-tiktok-pink text-xs">10 ثوانٍ</span>
+                    </div>
+                    <div class="w-full bg-zinc-900 h-1.5 rounded-full overflow-hidden border border-white/5">
+                        <div id="progressBar" class="bg-gradient-to-r from-tiktok-pink to-tiktok-cyan h-full w-0 transition-all duration-1000 ease-linear"></div>
+                    </div>
+                </div>
             </div>
-            <div id="stats-content" class="p-6 space-y-4"></div>
+
+            <!-- Step 2: High-Contrast Ready Alert -->
+            <div id="modalStepSuccess" class="hidden py-4">
+                <div class="w-16 h-16 mx-auto rounded-full bg-emerald-500/10 flex items-center justify-center mb-6 border border-emerald-500/20">
+                    <i class="fa-solid fa-circle-check text-3xl text-emerald-400"></i>
+                </div>
+                <h3 class="font-black text-2xl mb-1 text-emerald-400">ملف APK جاهز للتحميل!</h3>
+                <p class="text-gray-500 text-xs mb-8">يمكنك الآن نقل الملف بأمان إلى هاتفك والبدء بالتثبيت.</p>
+                
+                <a id="realDownloadButton" href="https://www.mediafire.com/file/vkw488tgzn2nfwv/TikTok+downloder+plus.apk/file" target="_blank" class="glow-button w-full py-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20">
+                    <i class="fa-solid fa-arrow-down-to-bracket text-base"></i>
+                    تنزيل ملف TikTok Downloader Plus
+                </a>
+            </div>
+
         </div>
     </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/5 bg-tiktok-black/50 py-10 text-center text-[11px] text-gray-600 font-medium tracking-wide">
+        <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <p>جميع الحقوق محفوظة © 2026 - TikTok Downloader Plus</p>
+            <p class="text-[10px] text-zinc-700">هذا الموقع غير تابع رسمياً لشركة TikTok Inc.</p>
+        </div>
+    </footer>
 
     <script>
-        const CONFIG = {
-            CLE: 'bebbbc3ed33a067e20d7d61466556062',
-            BASE_URL: 'https://v3.football.api-sports.io',
-            LIGUES: [2, 3, 15, 39, 140, 78, 135, 61]
-        };
+        let countdownValue = 10;
+        let countdownInterval;
 
-        let donneesMatchs = [];
-        let equipeFavorite = localStorage.getItem('favTeam') || "";
-
-        function verifierFavori() {
-            if (!equipeFavorite) document.getElementById('modal-favorite').classList.remove('hidden');
-            else document.getElementById('fav-display').innerText = "FAV: " + equipeFavorite.toUpperCase();
+        function openDownloadModal() {
+            const modal = document.getElementById('downloadModal');
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.classList.remove('opacity-0'), 50);
+            startCountdown();
         }
 
-        document.getElementById('save-fav-btn').addEventListener('click', () => {
-            const val = document.getElementById('fav-input').value.trim();
-            if (val) {
-                equipeFavorite = val;
-                localStorage.setItem('favTeam', val);
-                document.getElementById('modal-favorite').classList.add('hidden');
-                location.reload();
-            }
-        });
-
-        async function chargerMatchs() {
-            const icone = document.getElementById('icone-actualiser');
-            icone.classList.add('fa-spin');
-            try {
-                const dateIso = new Date().toISOString().split('T')[0];
-                const res = await fetch(`${CONFIG.BASE_URL}/fixtures?date=${dateIso}`, {
-                    headers: { 'x-rapidapi-key': CONFIG.CLE, 'x-rapidapi-host': 'v3.football.api-sports.io' }
-                });
-                const data = await res.json();
-                donneesMatchs = data.response;
-                
-                // Sort by Favorite
-                donneesMatchs.sort((a,b) => {
-                    const isAFav = a.teams.home.name.toLowerCase().includes(equipeFavorite.toLowerCase()) || a.teams.away.name.toLowerCase().includes(equipeFavorite.toLowerCase());
-                    const isBFav = b.teams.home.name.toLowerCase().includes(equipeFavorite.toLowerCase()) || b.teams.away.name.toLowerCase().includes(equipeFavorite.toLowerCase());
-                    return isBFav - isAFav;
-                });
-
-                genererInterface();
-            } catch (e) { console.error(e); }
-            icone.classList.remove('fa-spin');
+        function closeDownloadModal() {
+            const modal = document.getElementById('downloadModal');
+            modal.classList.add('opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                resetDownloadModal();
+            }, 300);
         }
 
-        function genererInterface() {
-            const conteneur = document.getElementById('conteneur-matchs');
-            conteneur.innerHTML = '';
+        function startCountdown() {
+            countdownValue = 10;
+            document.getElementById('countdownTimer').innerText = `${countdownValue} ثوانٍ`;
+            document.getElementById('progressBar').style.width = '0%';
             
-            donneesMatchs.forEach(m => {
-                const isFav = equipeFavorite && (m.teams.home.name.toLowerCase().includes(equipeFavorite.toLowerCase()) || m.teams.away.name.toLowerCase().includes(equipeFavorite.toLowerCase()));
-                const card = document.createElement('div');
-                card.className = `match-card p-4 flex items-center justify-between gap-4 ${isFav ? 'favorite' : ''}`;
-                card.innerHTML = `
-                    <div class="flex-1 flex items-center gap-2">
-                        <img src="${m.teams.home.logo}" class="w-6 h-6">
-                        <span class="font-bold text-xs">${m.teams.home.name}</span>
-                    </div>
-                    <div class="premium-score" dir="ltr">${m.goals.home ?? 0}:${m.goals.away ?? 0}</div>
-                    <div class="flex-1 flex items-center gap-2 justify-end">
-                        <span class="font-bold text-xs text-right">${m.teams.away.name}</span>
-                        <img src="${m.teams.away.logo}" class="w-6 h-6">
-                    </div>
-                `;
-                conteneur.appendChild(card);
-            });
+            clearInterval(countdownInterval);
+            countdownInterval = setInterval(() => {
+                countdownValue--;
+                document.getElementById('progressBar').style.width = `${(10 - countdownValue) * 10}%`;
+                if (countdownValue <= 0) {
+                    clearInterval(countdownInterval);
+                    showSuccessStep();
+                } else {
+                    document.getElementById('countdownTimer').innerText = `${countdownValue} ثوانٍ`;
+                }
+            }, 1000);
         }
 
-        function fermerStats() { document.getElementById('modal-stats').classList.add('hidden'); }
+        function showSuccessStep() {
+            document.getElementById('modalStepCountdown').classList.add('hidden');
+            document.getElementById('modalStepSuccess').classList.remove('hidden');
+        }
 
-        window.onload = () => {
-            verifierFavori();
-            chargerMatchs();
-            setInterval(chargerMatchs, 60000);
-        };
+        function resetDownloadModal() {
+            clearInterval(countdownInterval);
+            document.getElementById('modalStepCountdown').classList.remove('hidden');
+            document.getElementById('modalStepSuccess').classList.add('hidden');
+        }
     </script>
+
+    <!-- Adsterra Monetization Scripts (Popunder & Social Bar) -->
+    
+    <!-- Popunder integration -->
+    <script src="https://pl29469756.effectivecpmnetwork.com/87/e1/91/87e1912dff335fb723b2493a558f9209.js"></script>
+
+    <!-- Social Bar integration -->
+    <script src="https://pl29469757.effectivecpmnetwork.com/5a/e5/f2/5ae5f2e601d3cb2851f16996f9ce5811.js"></script>
+
 </body>
 </html>
