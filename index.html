@@ -1,334 +1,838 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" class="scroll-smooth">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TikTok Downloader Plus - تحميل تيك توك بدون علامة مائية</title>
-    <!-- Tailwind CSS CDN -->
+    <title>TikTok Downloader Plus - تنزيل فيديوهات تيك توك بدون علامة مائية</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts (Cairo) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        cairo: ['Cairo', 'sans-serif'],
-                    },
-                    colors: {
-                        tiktok: {
-                            black: '#09090b', // Richer pitch black
-                            cyan: '#00f2fe',
-                            pink: '#fe0979',
-                            darkGray: '#18181b', // Tailwind zinc-900
-                            lightGray: '#27272a', // Tailwind zinc-800
-                            accent: '#1f1f23'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/css/cairo@latest/latin.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/css/cairo@latest/arabic.css">
     <style>
+        * { font-family: 'Cairo', sans-serif; }
+        
         body {
-            font-family: 'Cairo', sans-serif;
-            background-color: #09090b;
-            background-image: radial-gradient(circle at 80% 10%, rgba(254, 9, 121, 0.08), transparent 500px),
-                              radial-gradient(circle at 20% 80%, rgba(0, 242, 254, 0.06), transparent 500px);
+            background: #0a0a0a;
+            color: white;
+            overflow-x: hidden;
         }
-        .glow-button {
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        
+        .tiktok-pink { color: #FE2C55; }
+        .tiktok-cyan { color: #25F4EE; }
+        .bg-tiktok-pink { background-color: #FE2C55; }
+        .bg-tiktok-cyan { background-color: #25F4EE; }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #FE2C55 0%, #25F4EE 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-        .glow-button:hover {
-            box-shadow: 0 0 25px rgba(254, 9, 121, 0.35);
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #FE2C55 0%, #25F4EE 100%);
         }
-        .glass-panel {
-            background: rgba(24, 24, 27, 0.7);
+        
+        .glow-pink {
+            box-shadow: 0 0 40px rgba(254, 44, 85, 0.5);
+        }
+        
+        .glow-cyan {
+            box-shadow: 0 0 40px rgba(37, 244, 238, 0.5);
+        }
+        
+        .ad-slot {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            border: 2px dashed #444;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 90px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .ad-slot::before {
+            content: 'إعلان';
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            font-size: 10px;
+            color: #666;
+            background: #111;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        
+        .ad-slot-large {
+            min-height: 250px;
+        }
+        
+        .ad-slot-banner {
+            min-height: 90px;
+        }
+        
+        .ad-slot-native {
+            min-height: 300px;
+        }
+        
+        .download-btn {
+            background: linear-gradient(135deg, #FE2C55 0%, #25F4EE 100%);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .download-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .download-btn:hover::before {
+            left: 100%;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 40px rgba(254, 44, 85, 0.6);
+        }
+        
+        .feature-card {
+            background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
+            border: 1px solid #333;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            border-color: #FE2C55;
+            transform: translateY(-5px);
+        }
+        
+        .modal-overlay {
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+        }
+        
+        @keyframes pulse-ring {
+            0% { transform: scale(0.9); opacity: 1; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+        
+        .pulse-ring::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FE2C55, #25F4EE);
+            animation: pulse-ring 2s ease-out infinite;
+            z-index: -1;
+        }
+        
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .countdown-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: conic-gradient(#FE2C55 var(--progress), #333 0deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .countdown-circle::before {
+            content: '';
+            position: absolute;
+            inset: 5px;
+            background: #0a0a0a;
+            border-radius: 50%;
+        }
+        
+        .countdown-text {
+            position: relative;
+            z-index: 1;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .stats-card {
+            background: linear-gradient(135deg, rgba(254, 44, 85, 0.1) 0%, rgba(37, 244, 238, 0.1) 100%);
+            border: 1px solid rgba(254, 44, 85, 0.3);
+        }
+        
+        .nav-blur {
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(10, 10, 10, 0.8);
+        }
+        
+        .scroll-indicator {
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(10px); }
         }
     </style>
 </head>
-<body class="text-gray-100 min-h-screen flex flex-col justify-between overflow-x-hidden selection:bg-tiktok-pink selection:text-white">
+<body>
 
-    <!-- Navigation Bar -->
-    <nav class="border-b border-white/5 bg-tiktok-black/80 backdrop-blur-xl sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto px-6">
-            <div class="flex items-center justify-between h-20">
-                <!-- Logo -->
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-tiktok-pink to-tiktok-cyan p-[1px] flex items-center justify-center">
-                        <div class="w-full h-full bg-tiktok-black rounded-[11px] flex items-center justify-center">
-                            <i class="fa-solid fa-cloud-arrow-down text-transparent bg-clip-text bg-gradient-to-tr from-tiktok-pink to-tiktok-cyan text-base"></i>
-                        </div>
-                    </div>
-                    <div>
-                        <span class="font-black text-lg tracking-tight bg-gradient-to-r from-white via-tiktok-cyan to-tiktok-pink bg-clip-text text-transparent">TikTok Downloader Plus</span>
-                        <span class="block text-[9px] text-gray-500 font-bold tracking-widest uppercase leading-none mt-0.5">V1.0.0 APK</span>
-                    </div>
+    <!-- Navigation -->
+    <nav class="nav-blur fixed top-0 w-full z-40 border-b border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z"/>
+                    </svg>
                 </div>
-                <!-- Navigation Links -->
-                <div class="hidden md:flex items-center gap-8">
-                    <a href="#features" class="text-gray-400 hover:text-white transition-colors text-sm font-medium">الميزات</a>
-                    <a href="#how-to-use" class="text-gray-400 hover:text-white transition-colors text-sm font-medium">كيفية التثبيت</a>
-                </div>
-                <!-- Download Action -->
                 <div>
-                    <button onclick="openDownloadModal()" class="glow-button px-5 py-2.5 rounded-xl bg-gradient-to-r from-tiktok-pink to-tiktok-cyan text-black font-extrabold text-xs tracking-wide shadow-lg shadow-tiktok-pink/10 flex items-center gap-2">
-                        <i class="fa-solid fa-download"></i> تحميل APK مجاناً
+                    <h1 class="font-bold text-lg">TikTok Downloader</h1>
+                    <p class="text-xs text-gray-400">Plus Edition</p>
+                </div>
+            </div>
+            <div class="hidden md:flex items-center gap-6 text-sm">
+                <a href="#features" class="hover:text-pink-500 transition">المميزات</a>
+                <a href="#screenshots" class="hover:text-pink-500 transition">لقطات الشاشة</a>
+                <a href="#faq" class="hover:text-pink-500 transition">الأسئلة</a>
+            </div>
+            <button onclick="showDownloadModal()" class="download-btn px-5 py-2 rounded-full text-white font-bold text-sm">
+                تحميل
+            </button>
+        </div>
+    </nav>
+
+    <!-- Top Ad Banner -->
+    <div class="fixed top-20 left-0 right-0 z-30 px-4">
+        <div class="max-w-7xl mx-auto">
+            <!-- 
+                ============================================
+                📢 AD SLOT: TOP BANNER
+                ============================================
+                AdSense Type: Display Ad (Banner)
+                Size: 728x90 or 320x50 (responsive)
+                Ad Unit ID: ضع معرف الوحدة هنا
+                Publisher ID: ضع معرف الناشر هنا (ca-pub-XXXXXXXXXXXXXXXX)
+                ============================================
+            -->
+            <div class="ad-slot ad-slot-banner" id="ad-top-banner">
+                <div class="text-center">
+                    <p class="text-gray-500 text-sm">مساحة إعلانية - Top Banner</p>
+                    <p class="text-gray-600 text-xs mt-1">728x90 / 320x50</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="pt-40 pb-20 px-4 relative overflow-hidden">
+        <!-- Background Effects -->
+        <div class="absolute top-20 right-10 w-72 h-72 bg-pink-500 rounded-full blur-[120px] opacity-20"></div>
+        <div class="absolute bottom-10 left-10 w-72 h-72 bg-cyan-400 rounded-full blur-[120px] opacity-20"></div>
+        
+        <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center relative z-10">
+            <div class="text-center md:text-right">
+                <div class="inline-flex items-center gap-2 bg-gray-900 border border-gray-800 rounded-full px-4 py-2 mb-6">
+                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                    <span class="text-sm text-gray-300">الإصدار 2.5.0 متاح الآن</span>
+                </div>
+                
+                <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+                    حمل فيديوهات <span class="gradient-text">تيك توك</span><br>
+                    بدون علامة مائية
+                </h1>
+                
+                <p class="text-gray-400 text-lg mb-8 leading-relaxed">
+                    أسرع وأسهل طريقة لتنزيل فيديوهات تيك توك بجودة عالية HD بدون أي علامة مائية. مجاني 100% وبدون حدود!
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                    <button onclick="showDownloadModal()" class="download-btn px-8 py-4 rounded-full text-white font-bold text-lg flex items-center justify-center gap-3">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                        </svg>
+                        تحميل التطبيق APK
+                    </button>
+                    <a href="#features" class="px-8 py-4 rounded-full border border-gray-700 text-white font-bold text-lg hover:border-pink-500 transition flex items-center justify-center gap-3">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        تعرف أكثر
+                    </a>
+                </div>
+                
+                <!-- Stats -->
+                <div class="grid grid-cols-3 gap-4 mt-10">
+                    <div class="stats-card rounded-xl p-4">
+                        <div class="text-2xl font-bold gradient-text">+5M</div>
+                        <div class="text-xs text-gray-400 mt-1">تحميل</div>
+                    </div>
+                    <div class="stats-card rounded-xl p-4">
+                        <div class="text-2xl font-bold gradient-text">4.8★</div>
+                        <div class="text-xs text-gray-400 mt-1">تقييم</div>
+                    </div>
+                    <div class="stats-card rounded-xl p-4">
+                        <div class="text-2xl font-bold gradient-text">100%</div>
+                        <div class="text-xs text-gray-400 mt-1">مجاني</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="relative flex justify-center">
+                <div class="float-animation">
+                    <img src="https://image.qwenlm.ai/public_source/94ed3e77-f362-4df8-be69-cf93bb348816/1663600d7-ab36-4f1e-a1a1-35ef932aaabb.png" 
+                         alt="TikTok Downloader Plus App" 
+                         class="rounded-3xl glow-pink max-w-md w-full">
+                </div>
+            </div>
+        </div>
+        
+        <div class="scroll-indicator absolute bottom-10 left-1/2 -translate-x-1/2">
+            <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Middle Ad Banner -->
+    <section class="py-10 px-4">
+        <div class="max-w-4xl mx-auto">
+            <!-- 
+                ============================================
+                📢 AD SLOT: MIDDLE BANNER
+                ============================================
+                AdSense Type: Display Ad (In-feed)
+                Size: 468x60 or 300x250
+                Ad Unit ID: ضع معرف الوحدة هنا
+                Publisher ID: ضع معرف الناشر هنا
+                ============================================
+            -->
+            <div class="ad-slot" id="ad-middle-banner">
+                <div class="text-center">
+                    <p class="text-gray-500 text-sm">مساحة إعلانية - Middle Banner</p>
+                    <p class="text-gray-600 text-xs mt-1">468x60 / 300x250</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-5xl font-bold mb-4">مميزات <span class="gradient-text">تطبيقنا</span></h2>
+                <p class="text-gray-400 text-lg">كل ما تحتاجه لتنزيل فيديوهات تيك توك في مكان واحد</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="feature-card rounded-2xl p-8">
+                    <div class="w-14 h-14 rounded-xl bg-pink-500/20 flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-pink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">تنزيل فائق السرعة</h3>
+                    <p class="text-gray-400 leading-relaxed">تنزيل الفيديوهات بسرعة عالية مع خوادمنا المتطورة في ثوانٍ معدودة</p>
+                </div>
+                
+                <div class="feature-card rounded-2xl p-8">
+                    <div class="w-14 h-14 rounded-xl bg-cyan-400/20 flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">بدون علامة مائية</h3>
+                    <p class="text-gray-400 leading-relaxed">احصل على فيديوهات نظيفة تماماً بدون أي شعارات أو علامات مائية</p>
+                </div>
+                
+                <div class="feature-card rounded-2xl p-8">
+                    <div class="w-14 h-14 rounded-xl bg-purple-500/20 flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">جودة HD عالية</h3>
+                    <p class="text-gray-400 leading-relaxed">تنزيل الفيديوهات بأعلى جودة متاحة تصل إلى 1080p و 4K</p>
+                </div>
+                
+                <div class="feature-card rounded-2xl p-8">
+                    <div class="w-14 h-14 rounded-xl bg-yellow-500/20 flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">آمن وخاص</h3>
+                    <p class="text-gray-400 leading-relaxed">لا نطلب أي بيانات شخصية أو تسجيل دخول. خصوصيتك مضمونة</p>
+                </div>
+                
+                <div class="feature-card rounded-2xl p-8">
+                    <div class="w-14 h-14 rounded-xl bg-green-500/20 flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">واجهة سهلة</h3>
+                    <p class="text-gray-400 leading-relaxed">تصميم بسيط وسهل الاستخدام. الصق الرابط واضغط تحميل فقط</p>
+                </div>
+                
+                <div class="feature-card rounded-2xl p-8">
+                    <div class="w-14 h-14 rounded-xl bg-red-500/20 flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">تحميل MP3</h3>
+                    <p class="text-gray-400 leading-relaxed">استخرج الصوت من أي فيديو وحمله كملف MP3 بجودة عالية</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Screenshots Section -->
+    <section id="screenshots" class="py-20 px-4 bg-gradient-to-b from-transparent via-gray-900/30 to-transparent">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-5xl font-bold mb-4">لقطات <span class="gradient-text">الشاشة</span></h2>
+                <p class="text-gray-400 text-lg">شاهد كيف يعمل التطبيق بخطوات بسيطة</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="relative rounded-2xl overflow-hidden border border-gray-800 hover:border-pink-500 transition">
+                        <img src="https://image.qwenlm.ai/public_source/94ed3e77-f362-4df8-be69-cf93bb348816/1e3c84599-9de5-43f2-a895-93aa00b51ac9.png" 
+                             alt="Step 1" class="w-full">
+                    </div>
+                    <div class="mt-4">
+                        <div class="inline-flex items-center justify-center w-10 h-10 rounded-full gradient-bg text-white font-bold mb-2">1</div>
+                        <h3 class="font-bold text-lg">الصق الرابط</h3>
+                        <p class="text-gray-400 text-sm">انسخ رابط فيديو تيك توك والصقه في التطبيق</p>
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <div class="relative rounded-2xl overflow-hidden border border-gray-800 hover:border-cyan-400 transition">
+                        <img src="https://image.qwenlm.ai/public_source/94ed3e77-f362-4df8-be69-cf93bb348816/1e3c84599-9de5-43f2-a895-93aa00b51ac9.png" 
+                             alt="Step 2" class="w-full">
+                    </div>
+                    <div class="mt-4">
+                        <div class="inline-flex items-center justify-center w-10 h-10 rounded-full gradient-bg text-white font-bold mb-2">2</div>
+                        <h3 class="font-bold text-lg">اضغط تحميل</h3>
+                        <p class="text-gray-400 text-sm">اضغط زر التحميل وانتظر بضع ثوانٍ</p>
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <div class="relative rounded-2xl overflow-hidden border border-gray-800 hover:border-pink-500 transition">
+                        <img src="https://image.qwenlm.ai/public_source/94ed3e77-f362-4df8-be69-cf93bb348816/1e3c84599-9de5-43f2-a895-93aa00b51ac9.png" 
+                             alt="Step 3" class="w-full">
+                    </div>
+                    <div class="mt-4">
+                        <div class="inline-flex items-center justify-center w-10 h-10 rounded-full gradient-bg text-white font-bold mb-2">3</div>
+                        <h3 class="font-bold text-lg">احفظ الفيديو</h3>
+                        <p class="text-gray-400 text-sm">احفظ الفيديو بدون علامة مائية على جهازك</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Native Ad -->
+    <section class="py-10 px-4">
+        <div class="max-w-4xl mx-auto">
+            <!-- 
+                ============================================
+                📢 AD SLOT: NATIVE AD
+                ============================================
+                AdSense Type: Native Ad
+                Size: Responsive
+                Ad Unit ID: ضع معرف الوحدة هنا
+                Publisher ID: ضع معرف الناشر هنا
+                ============================================
+            -->
+            <div class="ad-slot ad-slot-native" id="ad-native">
+                <div class="text-center">
+                    <p class="text-gray-500 text-sm">مساحة إعلانية - Native Ad</p>
+                    <p class="text-gray-600 text-xs mt-1">Responsive Native</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it Works -->
+    <section class="py-20 px-4">
+        <div class="max-w-5xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-5xl font-bold mb-4">كيف <span class="gradient-text">يعمل؟</span></h2>
+                <p class="text-gray-400 text-lg">ثلاث خطوات بسيطة فقط</p>
+            </div>
+            
+            <div class="space-y-8">
+                <div class="flex items-center gap-6 feature-card rounded-2xl p-6">
+                    <div class="w-16 h-16 rounded-2xl gradient-bg flex items-center justify-center text-2xl font-bold flex-shrink-0">1</div>
+                    <div>
+                        <h3 class="text-xl font-bold mb-2">افتح تيك توك</h3>
+                        <p class="text-gray-400">افتح تطبيق تيك توك واختر الفيديو الذي تريد تنزيله، ثم اضغط على زر المشاركة واختر "نسخ الرابط"</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-6 feature-card rounded-2xl p-6">
+                    <div class="w-16 h-16 rounded-2xl gradient-bg flex items-center justify-center text-2xl font-bold flex-shrink-0">2</div>
+                    <div>
+                        <h3 class="text-xl font-bold mb-2">الصق الرابط في التطبيق</h3>
+                        <p class="text-gray-400">افتح تطبيق TikTok Downloader Plus والصق الرابط في المكان المخصص</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-6 feature-card rounded-2xl p-6">
+                    <div class="w-16 h-16 rounded-2xl gradient-bg flex items-center justify-center text-2xl font-bold flex-shrink-0">3</div>
+                    <div>
+                        <h3 class="text-xl font-bold mb-2">اضغط تحميل واستمتع</h3>
+                        <p class="text-gray-400">اضغط زر التحميل وسيتم تنزيل الفيديو بجودة عالية بدون علامة مائية مباشرة على جهازك</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="py-20 px-4 bg-gradient-to-b from-transparent via-gray-900/30 to-transparent">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-5xl font-bold mb-4">الأسئلة <span class="gradient-text">الشائعة</span></h2>
+                <p class="text-gray-400 text-lg">إجابات لأكثر الأسئلة شيوعاً</p>
+            </div>
+            
+            <div class="space-y-4">
+                <div class="feature-card rounded-2xl p-6 cursor-pointer" onclick="toggleFaq(this)">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-lg">هل التطبيق مجاني؟</h3>
+                        <svg class="w-5 h-5 transition-transform faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </div>
+                    <div class="faq-content hidden mt-4 text-gray-400">
+                        نعم، التطبيق مجاني 100% ويمكنك تنزيل أي عدد من الفيديوهات بدون أي قيود أو اشتراكات.
+                    </div>
+                </div>
+                
+                <div class="feature-card rounded-2xl p-6 cursor-pointer" onclick="toggleFaq(this)">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-lg">هل يعمل على جميع الأجهزة؟</h3>
+                        <svg class="w-5 h-5 transition-transform faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </div>
+                    <div class="faq-content hidden mt-4 text-gray-400">
+                        نعم، التطبيق يعمل على جميع أجهزة أندرويد التي تعمل بنظام Android 5.0 وما فوق.
+                    </div>
+                </div>
+                
+                <div class="feature-card rounded-2xl p-6 cursor-pointer" onclick="toggleFaq(this)">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-lg">هل الفيديوهات بدون علامة مائية فعلاً؟</h3>
+                        <svg class="w-5 h-5 transition-transform faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </div>
+                    <div class="faq-content hidden mt-4 text-gray-400">
+                        نعم، جميع الفيديوهات يتم تنزيلها بدون أي علامة مائية وبجودة عالية HD.
+                    </div>
+                </div>
+                
+                <div class="feature-card rounded-2xl p-6 cursor-pointer" onclick="toggleFaq(this)">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-lg">هل التطبيق آمن؟</h3>
+                        <svg class="w-5 h-5 transition-transform faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </div>
+                    <div class="faq-content hidden mt-4 text-gray-400">
+                        نعم، التطبيق آمن تماماً ولا يحتوي على أي برمجيات خبيثة. لا نطلب أي صلاحيات غير ضرورية.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 px-4">
+        <div class="max-w-4xl mx-auto">
+            <div class="gradient-bg rounded-3xl p-12 text-center relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-white rounded-full blur-[100px] opacity-20"></div>
+                <div class="absolute bottom-0 left-0 w-64 h-64 bg-white rounded-full blur-[100px] opacity-20"></div>
+                
+                <div class="relative z-10">
+                    <h2 class="text-3xl md:text-5xl font-bold mb-6 text-white">جاهز لتجربة التطبيق؟</h2>
+                    <p class="text-white/90 text-lg mb-8">انضم إلى ملايين المستخدمين وحمّل فيديوهات تيك توك المفضلة لديك الآن</p>
+                    <button onclick="showDownloadModal()" class="bg-white text-black px-10 py-4 rounded-full font-bold text-lg hover:scale-105 transition inline-flex items-center gap-3">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                        </svg>
+                        تحميل التطبيق الآن
                     </button>
                 </div>
             </div>
         </div>
-    </nav>
+    </section>
 
-    <!-- Hero Section -->
-    <main class="flex-grow">
-        <section class="max-w-6xl mx-auto px-6 py-20 md:py-32 text-center relative">
-            <div class="absolute top-10 left-1/2 -translate-x-1/2 w-80 h-80 bg-tiktok-pink/5 rounded-full filter blur-[120px] pointer-events-none"></div>
-            
-            <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-tiktok-lightGray/40 border border-white/5 text-[11px] font-semibold text-gray-400 mb-8 backdrop-blur-md">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> ملف فحص آمن 100% متوفر للتحميل المباشر
-            </span>
-
-            <h1 class="text-4xl sm:text-6xl font-black mb-6 leading-tight max-w-3xl mx-auto tracking-tight">
-                حمّل فيديوهات تيك توك <br class="hidden sm:block">
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-tiktok-cyan to-tiktok-pink">بدون علامة مائية</span> تماماً وبسرعة فائقة
-            </h1>
-            
-            <p class="text-gray-400 text-sm sm:text-base max-w-xl mx-auto mb-12 font-medium leading-relaxed">
-                تطبيق أندرويد متكامل يتيح لك حفظ الفيديوهات والمقاطع الصوتية بجودتها الأصلية بدون علامات مائية وبنقرة زر واحدة.
-            </p>
-
-            <!-- Hero CTA Card -->
-            <div class="max-w-md mx-auto glass-panel p-8 rounded-2xl relative z-10 shadow-2xl shadow-black/80 mb-24">
-                <div class="flex items-center justify-between mb-8">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-xl bg-zinc-800 flex items-center justify-center text-emerald-400 text-2xl">
-                            <i class="fa-brands fa-android"></i>
-                        </div>
-                        <div class="text-right">
-                            <h3 class="font-bold text-base text-gray-200">TikTok Downloader Plus</h3>
-                            <p class="text-[11px] text-gray-500 mt-0.5">ملف تثبيت أندرويد (APK) نظيف كلياً</p>
-                        </div>
-                    </div>
-                    <span class="bg-zinc-800 text-tiktok-cyan text-[10px] font-extrabold px-2.5 py-1 rounded-md border border-white/5">V1.0.0</span>
-                </div>
-                
-                <button onclick="openDownloadModal()" class="glow-button w-full py-4 rounded-xl bg-gradient-to-r from-tiktok-pink via-purple-600 to-tiktok-cyan text-white font-extrabold text-sm transition-transform duration-300 hover:scale-[1.01] active:scale-[0.99] shadow-xl shadow-tiktok-pink/15 flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-circle-down text-lg"></i>
-                    ابدأ التحميل المباشر
-                </button>
-            </div>
-
-            <!-- Features Section -->
-            <div id="features" class="pt-16 border-t border-white/5">
-                <div class="text-center mb-16">
-                    <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">قوة الأداء والبساطة في تطبيق واحد</h2>
-                    <p class="text-gray-500 text-xs sm:text-sm mt-3 max-w-md mx-auto font-medium">لقد تم تصميم التطبيق خصيصاً ليمنحك أفضل تجربة تحميل ممكنة.</p>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-right">
-                    <!-- Feature Card 1 -->
-                    <div class="glass-panel p-8 rounded-2xl hover:border-tiktok-pink/20 transition-all duration-300 group">
-                        <div class="w-12 h-12 rounded-xl bg-tiktok-pink/10 flex items-center justify-center text-tiktok-pink text-xl mb-6 group-hover:scale-110 transition-transform">
-                            <i class="fa-solid fa-wand-magic-sparkles"></i>
-                        </div>
-                        <h4 class="font-bold text-lg text-gray-200 mb-2">إزالة العلامة المائية ذكياً</h4>
-                        <p class="text-gray-500 text-xs sm:text-sm leading-relaxed">بفضل خوارزميات المعالجة الذكية، يقوم التطبيق بنسخ الفيديو نظيفاً وخالياً تماماً من أي شعارات مائية غير مرغوبة.</p>
-                    </div>
-                    
-                    <!-- Feature Card 2 -->
-                    <div class="glass-panel p-8 rounded-2xl hover:border-tiktok-cyan/20 transition-all duration-300 group">
-                        <div class="w-12 h-12 rounded-xl bg-tiktok-cyan/10 flex items-center justify-center text-tiktok-cyan text-xl mb-6 group-hover:scale-110 transition-transform">
-                            <i class="fa-solid fa-bolt-lightning"></i>
-                        </div>
-                        <h4 class="font-bold text-lg text-gray-200 mb-2">تحميل بـسرعة فائقة</h4>
-                        <p class="text-gray-500 text-xs sm:text-sm leading-relaxed">اتصالات متعددة الخيوط تضمن لك سحب الفيديو بأقصى سرعة يسمح بها اتصال الإنترنت الخاص بك ودون أي تأخير.</p>
-                    </div>
-                    
-                    <!-- Feature Card 3 -->
-                    <div class="glass-panel p-8 rounded-2xl hover:border-emerald-500/20 transition-all duration-300 group">
-                        <div class="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 text-xl mb-6 group-hover:scale-110 transition-transform">
-                            <i class="fa-solid fa-shield-virus"></i>
-                        </div>
-                        <h4 class="font-bold text-lg text-gray-200 mb-2">تأمين مـوثق وآمـن</h4>
-                        <p class="text-gray-500 text-xs sm:text-sm leading-relaxed">ملف APK مجتاز لجميع بروتوكولات الأمان وفحوصات الفيروسات المعتمدة، نضمن لك سلامة جهازك وبياناتك بالكامل.</p>
-                    </div>
+    <!-- Footer Ad -->
+    <section class="py-10 px-4">
+        <div class="max-w-4xl mx-auto">
+            <!-- 
+                ============================================
+                📢 AD SLOT: FOOTER BANNER
+                ============================================
+                AdSense Type: Display Ad (Banner)
+                Size: 728x90 or 320x50
+                Ad Unit ID: ضع معرف الوحدة هنا
+                Publisher ID: ضع معرف الناشر هنا
+                ============================================
+            -->
+            <div class="ad-slot ad-slot-banner" id="ad-footer-banner">
+                <div class="text-center">
+                    <p class="text-gray-500 text-sm">مساحة إعلانية - Footer Banner</p>
+                    <p class="text-gray-600 text-xs mt-1">728x90 / 320x50</p>
                 </div>
             </div>
-
-            <!-- Installation Guide Section -->
-            <div id="how-to-use" class="pt-24 pb-12">
-                <div class="text-center mb-16">
-                    <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">كيفية تثبيت التطبيق وتفعيله؟</h2>
-                    <p class="text-gray-500 text-xs sm:text-sm mt-3 max-w-md mx-auto">خطوات سريعة للبدء في استخدام التطبيق على هاتفك الأندرويد.</p>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-right max-w-5xl mx-auto">
-                    <div class="flex gap-4">
-                        <div class="text-3xl font-black text-zinc-800">01</div>
-                        <div>
-                            <h4 class="font-bold text-base text-gray-200 mb-1">تنزيل ملف الـ APK</h4>
-                            <p class="text-gray-500 text-xs leading-relaxed">اضغط على زر التحميل في الأعلى وانتظر اكتمال إعداد الملف ليتم نقلك لـ MediaFire لبدء التنزيل.</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-4">
-                        <div class="text-3xl font-black text-zinc-800">02</div>
-                        <div>
-                            <h4 class="font-bold text-base text-gray-200 mb-1">السماح بالمصادر غير المعروفة</h4>
-                            <p class="text-gray-500 text-xs leading-relaxed">إذا طُلب منك، قم بتفعيل خيار "تثبيت التطبيقات من مصادر غير معروفة" في إعدادات الأمان بهاتفك.</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-4">
-                        <div class="text-3xl font-black text-zinc-800">03</div>
-                        <div>
-                            <h4 class="font-bold text-base text-gray-200 mb-1">ابدأ التحميل والمشاركة</h4>
-                            <p class="text-gray-500 text-xs leading-relaxed">افتح التطبيق، انسخ رابط أي فيديو من تيك توك، الصقه بالتطبيق وحمل فوراً بدون علامة مائية.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </section>
-    </main>
-
-    <!-- High-Fidelity Download & Verification Modal -->
-    <div id="downloadModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/95 backdrop-blur-md hidden transition-opacity duration-300 opacity-0">
-        <div class="glass-panel w-full max-w-md p-8 rounded-2xl text-center relative border border-white/10 shadow-2xl">
-            
-            <!-- Close Button -->
-            <button onclick="closeDownloadModal()" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-zinc-900 text-gray-500 hover:text-white flex items-center justify-center transition-colors border border-white/5">
-                <i class="fa-solid fa-xmark text-sm"></i>
-            </button>
-
-            <!-- Step 1: Secure Link Preparation & Verification -->
-            <div id="modalStepCountdown" class="py-4">
-                <div class="w-12 h-12 mx-auto rounded-xl bg-gradient-to-tr from-tiktok-pink to-tiktok-cyan p-[1px] flex items-center justify-center mb-6">
-                    <div class="w-full h-full bg-zinc-950 rounded-[11px] flex items-center justify-center">
-                        <i class="fa-solid fa-shield-halved text-transparent bg-clip-text bg-gradient-to-tr from-tiktok-pink to-tiktok-cyan text-lg animate-pulse"></i>
-                    </div>
-                </div>
-                
-                <h3 class="font-black text-xl mb-1 text-gray-200">تحضير رابط التحميل الآمن...</h3>
-                <p class="text-gray-500 text-xs mb-8">يتم الآن فحص وتجهيز خادم التنزيل المباشر الخاص بك.</p>
-                
-                <!-- System Status Board (Adds Premium Aesthetic) -->
-                <div class="bg-zinc-950/50 border border-white/5 rounded-xl p-4 mb-8 text-right text-xs space-y-2 font-mono text-zinc-400">
-                    <div class="flex justify-between items-center">
-                        <span>الخادم الرئيسي:</span>
-                        <span class="text-emerald-500">مُتصل (آمن)</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span>حجم الملف:</span>
-                        <span>12.4 MB</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span>فحص الحماية:</span>
-                        <span class="text-tiktok-cyan">مؤمن بالكامل</span>
-                    </div>
-                </div>
-
-                <!-- Circular Progress & Timer -->
-                <div class="mb-2">
-                    <div class="flex justify-between items-center text-xs text-gray-400 mb-2">
-                        <span>جاري التحقق من الهوية...</span>
-                        <span id="countdownTimer" class="font-bold text-tiktok-pink text-xs">10 ثوانٍ</span>
-                    </div>
-                    <div class="w-full bg-zinc-900 h-1.5 rounded-full overflow-hidden border border-white/5">
-                        <div id="progressBar" class="bg-gradient-to-r from-tiktok-pink to-tiktok-cyan h-full w-0 transition-all duration-1000 ease-linear"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Step 2: High-Contrast Ready Alert -->
-            <div id="modalStepSuccess" class="hidden py-4">
-                <div class="w-16 h-16 mx-auto rounded-full bg-emerald-500/10 flex items-center justify-center mb-6 border border-emerald-500/20">
-                    <i class="fa-solid fa-circle-check text-3xl text-emerald-400"></i>
-                </div>
-                <h3 class="font-black text-2xl mb-1 text-emerald-400">ملف APK جاهز للتحميل!</h3>
-                <p class="text-gray-500 text-xs mb-8">يمكنك الآن نقل الملف بأمان إلى هاتفك والبدء بالتثبيت.</p>
-                
-                <a id="realDownloadButton" href="https://www.mediafire.com/file/vkw488tgzn2nfwv/TikTok+downloder+plus.apk/file" target="_blank" class="glow-button w-full py-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20">
-                    <i class="fa-solid fa-arrow-down-to-bracket text-base"></i>
-                    تنزيل ملف TikTok Downloader Plus
-                </a>
-            </div>
-
         </div>
-    </div>
+    </section>
 
     <!-- Footer -->
-    <footer class="border-t border-white/5 bg-tiktok-black/50 py-10 text-center text-[11px] text-gray-600 font-medium tracking-wide">
-        <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <p>جميع الحقوق محفوظة © 2026 - TikTok Downloader Plus</p>
-            <p class="text-[10px] text-zinc-700">هذا الموقع غير تابع رسمياً لشركة TikTok Inc.</p>
+    <footer class="border-t border-gray-800 py-10 px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold">TikTok Downloader</h3>
+                            <p class="text-xs text-gray-400">Plus Edition</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 text-sm">أفضل تطبيق لتنزيل فيديوهات تيك توك بدون علامة مائية</p>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4">روابط سريعة</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="#features" class="hover:text-pink-500 transition">المميزات</a></li>
+                        <li><a href="#screenshots" class="hover:text-pink-500 transition">لقطات الشاشة</a></li>
+                        <li><a href="#faq" class="hover:text-pink-500 transition">الأسئلة الشائعة</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4">قانوني</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="#" class="hover:text-pink-500 transition">سياسة الخصوصية</a></li>
+                        <li><a href="#" class="hover:text-pink-500 transition">شروط الاستخدام</a></li>
+                        <li><a href="#" class="hover:text-pink-500 transition">إخلاء المسؤولية</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4">تواصل معنا</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="#" class="hover:text-pink-500 transition">البريد الإلكتروني</a></li>
+                        <li><a href="#" class="hover:text-pink-500 transition">تويتر</a></li>
+                        <li><a href="#" class="hover:text-pink-500 transition">تيليجرام</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 pt-6 text-center text-gray-500 text-sm">
+                <p>© 2026 TikTok Downloader Plus. جميع الحقوق محفوظة.</p>
+                <p class="mt-2 text-xs">هذا التطبيق غير تابع رسمياً لشركة TikTok Inc.</p>
+            </div>
         </div>
     </footer>
 
+    <!-- Download Modal (Interstitial Ad) -->
+    <div id="downloadModal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-overlay absolute inset-0" onclick="closeDownloadModal()"></div>
+        
+        <div class="absolute inset-0 flex items-center justify-center p-4">
+            <div class="bg-gray-900 border border-gray-800 rounded-3xl max-w-md w-full relative overflow-hidden">
+                <!-- Close Button -->
+                <button onclick="closeDownloadModal()" class="absolute top-4 left-4 z-10 w-10 h-10 rounded-full bg-gray-800 hover:bg-gray-700 flex items-center justify-center transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+                
+                <!-- Interstitial Ad Area -->
+                <!-- 
+                    ============================================
+                    📢 AD SLOT: INTERSTITIAL AD (عند الضغط على تحميل)
+                    ============================================
+                    AdSense Type: Interstitial Ad
+                    Ad Unit ID: ضع معرف الوحدة هنا
+                    Publisher ID: ضع معرف الناشر هنا
+                    
+                    ملاحظة: هذا الإعلان يظهر عند الضغط على زر التحميل
+                    ============================================
+                -->
+                <div class="ad-slot ad-slot-large rounded-none border-0 border-b border-gray-800" id="ad-interstitial">
+                    <div class="text-center">
+                        <p class="text-gray-500 text-sm">إعلان بيني - Interstitial Ad</p>
+                        <p class="text-gray-600 text-xs mt-1">يظهر عند الضغط على تحميل</p>
+                    </div>
+                </div>
+                
+                <!-- Modal Content -->
+                <div class="p-8 text-center">
+                    <div class="w-20 h-20 rounded-2xl gradient-bg flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                        </svg>
+                    </div>
+                    
+                    <h3 class="text-2xl font-bold mb-3">جاري تحضير التحميل</h3>
+                    <p class="text-gray-400 mb-6">يرجى الانتظار بينما نحضر رابط التحميل المباشر</p>
+                    
+                    <!-- Countdown -->
+                    <div class="flex justify-center mb-6">
+                        <div class="countdown-circle" id="countdownCircle" style="--progress: 0deg;">
+                            <span class="countdown-text gradient-text" id="countdownText">5</span>
+                        </div>
+                    </div>
+                    
+                    <p class="text-gray-500 text-sm mb-6">سيبدأ التحميل تلقائياً بعد <span id="countdownSeconds" class="gradient-text font-bold">5</span> ثوانٍ</p>
+                    
+                    <button onclick="startDirectDownload()" class="w-full gradient-bg text-white py-4 rounded-xl font-bold hover:opacity-90 transition">
+                        تحميل مباشر الآن
+                    </button>
+                    
+                    <p class="text-gray-600 text-xs mt-4">TikTok_Downloader_Plus.apk • 15 MB</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Download Button (Mobile) -->
+    <div class="fixed bottom-6 left-0 right-0 z-30 px-4 md:hidden">
+        <button onclick="showDownloadModal()" class="w-full download-btn py-4 rounded-full text-white font-bold flex items-center justify-center gap-3 glow-pink">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+            </svg>
+            تحميل التطبيق
+        </button>
+    </div>
+
     <script>
-        let countdownValue = 10;
+        // Download Modal Functions
         let countdownInterval;
-
-        function openDownloadModal() {
-            const modal = document.getElementById('downloadModal');
-            modal.classList.remove('hidden');
-            setTimeout(() => modal.classList.remove('opacity-0'), 50);
+        let countdownValue = 5;
+        
+        function showDownloadModal() {
+            document.getElementById('downloadModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
             startCountdown();
-        }
-
-        function closeDownloadModal() {
-            const modal = document.getElementById('downloadModal');
-            modal.classList.add('opacity-0');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                resetDownloadModal();
-            }, 300);
-        }
-
-        function startCountdown() {
-            countdownValue = 10;
-            document.getElementById('countdownTimer').innerText = `${countdownValue} ثوانٍ`;
-            document.getElementById('progressBar').style.width = '0%';
             
+            // هنا يمكنك استدعاء إعلان Interstitial من AdSense
+            // showInterstitialAd();
+        }
+        
+        function closeDownloadModal() {
+            document.getElementById('downloadModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
             clearInterval(countdownInterval);
+        }
+        
+        function startCountdown() {
+            countdownValue = 5;
+            document.getElementById('countdownText').textContent = countdownValue;
+            document.getElementById('countdownSeconds').textContent = countdownValue;
+            
+            updateCountdownCircle();
+            
             countdownInterval = setInterval(() => {
                 countdownValue--;
-                document.getElementById('progressBar').style.width = `${(10 - countdownValue) * 10}%`;
+                document.getElementById('countdownText').textContent = countdownValue;
+                document.getElementById('countdownSeconds').textContent = countdownValue;
+                updateCountdownCircle();
+                
                 if (countdownValue <= 0) {
                     clearInterval(countdownInterval);
-                    showSuccessStep();
-                } else {
-                    document.getElementById('countdownTimer').innerText = `${countdownValue} ثوانٍ`;
+                    startDirectDownload();
                 }
             }, 1000);
         }
-
-        function showSuccessStep() {
-            document.getElementById('modalStepCountdown').classList.add('hidden');
-            document.getElementById('modalStepSuccess').classList.remove('hidden');
+        
+        function updateCountdownCircle() {
+            const progress = ((5 - countdownValue) / 5) * 360;
+            document.getElementById('countdownCircle').style.setProperty('--progress', progress + 'deg');
         }
-
-        function resetDownloadModal() {
-            clearInterval(countdownInterval);
-            document.getElementById('modalStepCountdown').classList.remove('hidden');
-            document.getElementById('modalStepSuccess').classList.add('hidden');
+        
+        function startDirectDownload() {
+            // رابط التحميل المباشر
+            const downloadUrl = 'https://www.mediafire.com/file/vkw488tgzn2nfwv/TikTok_downloder_plus.apk/file';
+            
+            // إنشاء رابط تحميل
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.download = 'TikTok_Downloader_Plus.apk';
+            link.target = '_blank';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            closeDownloadModal();
         }
+        
+        // FAQ Toggle
+        function toggleFaq(element) {
+            const content = element.querySelector('.faq-content');
+            const icon = element.querySelector('.faq-icon');
+            
+            content.classList.toggle('hidden');
+            icon.style.transform = content.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
+        }
+        
+        // Smooth Scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+        
+        // Close modal on ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeDownloadModal();
+            }
+        });
     </script>
-
-    <!-- Adsterra Monetization Scripts (Popunder & Social Bar) -->
-    
-    <!-- Popunder integration -->
-    <script src="https://pl29469756.effectivecpmnetwork.com/87/e1/91/87e1912dff335fb723b2493a558f9209.js"></script>
-
-    <!-- Social Bar integration -->
-    <script src="https://pl29469757.effectivecpmnetwork.com/5a/e5/f2/5ae5f2e601d3cb2851f16996f9ce5811.js"></script>
-
 </body>
 </html>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+     data-ad-slot="YYYYYYYYYY"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
